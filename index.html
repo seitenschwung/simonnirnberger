@@ -9,6 +9,11 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
+  <!-- Static blob: shown until WebGL draws its first frame, and instead of it
+       when WebGL is missing (or JavaScript is off). -->
+  <div class="fallback" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><path d="M52 4c17 1 33 10 40 26s4 37-7 50-29 19-46 15S7 79 4 61 6 25 19 14 35 3 52 4z" /></svg>
+  </div>
   <canvas id="scene" aria-hidden="true"></canvas>
 
   <h1 class="name" aria-label="Simon Ernst Nirnberger">
