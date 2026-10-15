@@ -39,9 +39,9 @@ jobs:
           fi
 
   docker:
-    name: Docker-Image
+    name: Docker-Image + Browser-Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,6 +69,206 @@ jobs:
             curl -fsS -o /dev/null "$base$asset" && echo "ok $asset"
           done
           [ "$(docker exec web id -u)" = 101 ]
+
+      # Real browsers against exactly this image. The tests live here in the workflow on purpose:
+      # the bot can't change workflow files, so it can't weaken the gate its own PRs must pass.
+      # They check behaviour, not content, so they keep working when the site is redesigned.
+      - name: Write browser tests
+        run: |
+          mkdir -p "$RUNNER_TEMP/e2e" && cd "$RUNNER_TEMP/e2e"
+          cat > playwright.config.mjs <<'EOF'
+          import { defineConfig, devices } from '@playwright/test';
+          // Software WebGL (SwiftShader): CI runners have no GPU, and Chromium no longer
+          // falls back to it on its own.
+          const gl = ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'];
+          export default defineConfig({
+            testDir: '.',
+            timeout: 90_000,
+            retries: 1,
+            reporter: [['list'], ['html', { open: 'never', outputFolder: 'report' }]],
+            outputDir: 'results',
+            use: { baseURL: process.env.BASE_URL, screenshot: 'only-on-failure', trace: 'retain-on-failure' },
+            projects: [
+              { name: 'desktop', grepInvert: /@no-webgl/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, launchOptions: { args: gl } } },
+              { name: 'mobile', grepInvert: /@no-webgl/, use: { ...devices['Pixel 7'], launchOptions: { args: gl } } },
+              // A browser without WebGL at all (old devices, blocked GPUs)
+              { name: 'no-webgl', grep: /@no-webgl/, use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--disable-webgl', '--disable-3d-apis'] } } },
+            ],
+          });
+          EOF
+          cat > site.spec.mjs <<'EOF'
+          import { test, expect } from '@playwright/test';
+          import AxeBuilder from '@axe-core/playwright';
+
+          const ORIGIN = new URL(process.env.BASE_URL).origin;
+          const MAX_PAGES = 25;
+
+          // Everything that must never happen on the live site, collected while a page runs.
+          function watch(page, { allowConsole = [], expectStatus = {} } = {}) {
+            const problems = [];
+            page.on('console', (m) => {
+              if (m.type() === 'error' && !allowConsole.some((re) => re.test(m.text()))) problems.push(`console error: ${m.text()}`);
+            });
+            page.on('pageerror', (e) => problems.push(`uncaught exception: ${e.message}`));
+            page.on('requestfailed', (r) => {
+              const why = r.failure()?.errorText ?? '';
+              if (!/ERR_ABORTED/.test(why)) problems.push(`request failed: ${r.url()} (${why})`);
+            });
+            page.on('request', (r) => {
+              const u = new URL(r.url());
+              if (!['data:', 'blob:'].includes(u.protocol) && u.origin !== ORIGIN) problems.push(`request to another host: ${r.url()}`);
+            });
+            page.on('response', (r) => {
+              const path = new URL(r.url()).pathname;
+              if (r.status() >= 400 && expectStatus[path] !== r.status()) problems.push(`HTTP ${r.status()}: ${r.url()}`);
+            });
+            return problems;
+          }
+
+          // Scroll to the end with the mouse wheel (smooth-scroll libraries listen to wheel events)
+          // and give scroll-driven animations time to run.
+          async function scrollThrough(page) {
+            for (let i = 0; i < 60; i++) {
+              const atEnd = await page.evaluate(() => innerHeight + scrollY >= document.documentElement.scrollHeight - 2);
+              if (atEnd) break;
+              await page.mouse.wheel(0, 500);
+              await page.waitForTimeout(120);
+            }
+            await page.waitForTimeout(800);
+          }
+
+          async function checkPage(page, path, testInfo) {
+            const problems = watch(page);
+            const res = await page.goto(path, { waitUntil: 'load' });
+            expect.soft(res?.status(), `${path} status`).toBe(200);
+            await page.waitForLoadState('networkidle').catch(() => {});
+
+            // Basics every page needs
+            await expect.soft(page, `${path} has a title`).toHaveTitle(/\S/);
+            expect.soft(await page.getAttribute('html', 'lang'), `${path} <html lang>`).toBeTruthy();
+            expect.soft(await page.locator('meta[name="viewport"]').count(), `${path} viewport meta`).toBe(1);
+            expect.soft(await page.locator('meta[name="description"]').getAttribute('content').catch(() => null), `${path} meta description`).toBeTruthy();
+            await expect.soft(page.locator('h1').first(), `${path} has a visible h1`).toBeVisible();
+
+            await testInfo.attach(`${path} top`, { body: await page.screenshot(), contentType: 'image/png' });
+            await scrollThrough(page);
+            await testInfo.attach(`${path} end`, { body: await page.screenshot(), contentType: 'image/png' });
+
+            // Nothing wider than the screen (the classic mobile bug)
+            const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+            expect.soft(overflow, `${path} horizontal overflow in px`).toBeLessThanOrEqual(1);
+
+            // Every image actually loaded (after scrolling, so lazy images had their chance)
+            // (an <img> without src, e.g. a lightbox placeholder, loads nothing and is skipped)
+            const broken = await page.$$eval('img', (imgs) => imgs
+              .filter((i) => (i.getAttribute('src') || i.getAttribute('srcset')) && i.complete && i.naturalWidth === 0)
+              .map((i) => i.currentSrc || i.src));
+            expect.soft(broken, `${path} broken images`).toEqual([]);
+
+            // Accessibility: WCAG 2.x A/AA, serious and critical findings fail
+            const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+            const bad = axe.violations.filter((v) => ['serious', 'critical'].includes(v.impact));
+            expect.soft(bad.map((v) => `${v.id}: ${v.help} (${v.nodes.length}x) ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`), `${path} accessibility`).toEqual([]);
+
+            expect.soft(problems, `${path} runtime problems`).toEqual([]);
+
+            return page.$$eval('a[href]', (as) => as.map((a) => a.href));
+          }
+
+          test('WebGL is available in this browser (so the 3D code really runs)', async ({ page }) => {
+            await page.goto('/');
+            expect(await page.evaluate(() => !!document.createElement('canvas').getContext('webgl2'))).toBe(true);
+          });
+
+          test('all pages: load cleanly, scroll, fit the screen, accessible', async ({ page }, testInfo) => {
+            const seen = new Set();
+            const queue = ['/'];
+            while (queue.length && seen.size < MAX_PAGES) {
+              const path = queue.shift();
+              if (seen.has(path)) continue;
+              seen.add(path);
+              for (const href of await checkPage(page, path, testInfo)) {
+                const u = new URL(href);
+                if (u.origin === ORIGIN && !seen.has(u.pathname) && !/\.(pdf|zip|jpe?g|png|webp|avif|gif|svg|mp4|webm)$/i.test(u.pathname)) queue.push(u.pathname);
+              }
+            }
+            console.log(`checked ${seen.size} page(s): ${[...seen].join(', ')}`);
+          });
+
+          test.describe('with reduced motion', () => {
+            test.use({ reducedMotion: 'reduce' });
+            test('start page runs without errors', async ({ page }) => {
+              const problems = watch(page);
+              await page.goto('/');
+              await scrollThrough(page);
+              await expect(page.locator('h1').first()).toBeVisible();
+              expect(problems).toEqual([]);
+            });
+          });
+
+          test('without WebGL the start page still works (fallback instead of a crash) @no-webgl', async ({ page }) => {
+            // three.js reports the missing context on the console; that alone is fine, a crash is not.
+            const problems = watch(page, { allowConsole: [/WebGL/i] });
+            await page.goto('/');
+            await scrollThrough(page);
+            await expect(page.locator('h1').first()).toBeVisible();
+            expect(problems).toEqual([]);
+          });
+
+          test('unknown URL: real 404 with the styled error page', async ({ page }) => {
+            // Chrome logs the (expected) 404 of the page itself; any other failing file still counts.
+            const problems = watch(page, { expectStatus: { '/gibt-es-nicht': 404 }, allowConsole: [/status of 404/] });
+            const res = await page.goto('/gibt-es-nicht');
+            expect(res?.status()).toBe(404);
+            await expect(page.locator('h1').first()).toBeVisible();
+            expect(await page.locator('a[href="/"]').count(), 'link back to the start page').toBeGreaterThan(0);
+            expect(problems).toEqual([]);
+          });
+          EOF
+          cat > lighthouse-check.mjs <<'EOF'
+          // Fails below the minimum scores. Performance is only reported: software WebGL on a
+          // shared CI runner says little about real devices.
+          import { readFileSync } from 'node:fs';
+          const min = { accessibility: 0.9, 'best-practices': 0.9, seo: 0.9 };
+          const { categories } = JSON.parse(readFileSync('lighthouse/report.report.json', 'utf8'));
+          let failed = false;
+          for (const [id, c] of Object.entries(categories)) {
+            const score = Math.round(c.score * 100);
+            const need = min[id];
+            const ok = need === undefined || c.score >= need;
+            console.log(`${ok ? 'ok  ' : 'FAIL'} ${c.title}: ${score}${need ? ` (min ${need * 100})` : ' (info)'}`);
+            if (!ok) { failed = true; console.log(`::error::Lighthouse ${c.title} ${score} < ${need * 100}`); }
+          }
+          process.exit(failed ? 1 : 0);
+          EOF
+
+      - name: Browser tests (Playwright + axe, desktop and mobile) and Lighthouse
+        run: |
+          docker run --rm --ipc=host --network host -v "$RUNNER_TEMP/e2e:/e2e" -w /e2e \
+            -e CI=true -e BASE_URL=http://127.0.0.1:8080 \
+            mcr.microsoft.com/playwright:v1.63.0-noble sh -c '
+              set -e
+              npm init -y > /dev/null
+              npm install --no-audit --no-fund --loglevel=error @playwright/test@1.63.0 @axe-core/playwright@4.13.0 lighthouse@13.5.0
+              status=0
+              npx playwright test || status=1
+              mkdir -p lighthouse
+              chrome="$(node -e "import(\"@playwright/test\").then(m => console.log(m.chromium.executablePath()))")"
+              CHROME_PATH="$chrome" npx lighthouse "$BASE_URL/" --quiet \
+                --chrome-flags="--headless=new --no-sandbox --enable-unsafe-swiftshader --use-angle=swiftshader" \
+                --only-categories=performance,accessibility,best-practices,seo \
+                --output=json --output=html --output-path=./lighthouse/report
+              node lighthouse-check.mjs || status=1
+              exit $status'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-tests
+          path: |
+            ${{ runner.temp }}/e2e/report/
+            ${{ runner.temp }}/e2e/results/
+            ${{ runner.temp }}/e2e/lighthouse/
+          retention-days: 14
       - name: Container logs
         if: always()
         run: docker logs web 2>&1 | tail -50
