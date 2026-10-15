@@ -1,0 +1,145 @@
+[
+  {
+    "id": 13,
+    "title": "Werk 13",
+    "type": "Malerei",
+    "category": "malerei",
+    "full": "assets/artworks/13_turquoise-red-skull.webp",
+    "thumbnail": "assets/thumbs/13_turquoise-red-skull.webp",
+    "width": 1321,
+    "height": 1917,
+    "description": "Farbintensive Malerei eines surrealen Schädels in Türkis- und Rottönen."
+  },
+  {
+    "id": 4,
+    "title": "Werk 04",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/04_surreal-ink-face.webp",
+    "thumbnail": "assets/thumbs/04_surreal-ink-face.webp",
+    "width": 881,
+    "height": 1381,
+    "description": "Dichte Schwarz-Weiß-Zeichnung mit organischen, verschlungenen Gesichtsformen."
+  },
+  {
+    "id": 5,
+    "title": "Werk 05",
+    "type": "Malerei",
+    "category": "malerei",
+    "full": "assets/artworks/05_red-abstract-portrait.webp",
+    "thumbnail": "assets/thumbs/05_red-abstract-portrait.webp",
+    "width": 1495,
+    "height": 2030,
+    "description": "Leuchtend rote und cremefarbene abstrakte Malerei mit organischen Konturen."
+  },
+  {
+    "id": 8,
+    "title": "Werk 08",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/08_stone-wall-portal.webp",
+    "thumbnail": "assets/thumbs/08_stone-wall-portal.webp",
+    "width": 986,
+    "height": 1417,
+    "description": "Schwarz-Weiß-Zeichnung eines dunklen runden Portals in einer strukturierten Steinwand."
+  },
+  {
+    "id": 3,
+    "title": "Werk 03",
+    "type": "Malerei",
+    "category": "malerei",
+    "full": "assets/artworks/03_green-yellow-abstract.webp",
+    "thumbnail": "assets/thumbs/03_green-yellow-abstract.webp",
+    "width": 1518,
+    "height": 2030,
+    "description": "Abstrakte grün-gelbe Malerei mit geschwungenen Formen auf dunklem Grund."
+  },
+  {
+    "id": 11,
+    "title": "Werk 11",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/11_abstract-body-ink.webp",
+    "thumbnail": "assets/thumbs/11_abstract-body-ink.webp",
+    "width": 835,
+    "height": 1131,
+    "description": "Schwarz-Weiß-Zeichnung einer organischen, menschenähnlichen Figur mit verschränkten Gliedmaßen."
+  },
+  {
+    "id": 1,
+    "title": "Werk 01",
+    "type": "Malerei",
+    "category": "malerei",
+    "full": "assets/artworks/01_crimson-vessel.webp",
+    "thumbnail": "assets/thumbs/01_crimson-vessel.webp",
+    "width": 1040,
+    "height": 1430,
+    "description": "Rote Malerei mit einem gefäßartigen Zentrum und organischen, muschelartigen Formen."
+  },
+  {
+    "id": 9,
+    "title": "Werk 09",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/09_surreal-moon-figures.webp",
+    "thumbnail": "assets/thumbs/09_surreal-moon-figures.webp",
+    "width": 1070,
+    "height": 1505,
+    "description": "Surreale Schwarz-Weiß-Zeichnung zweier Figuren unter einem kreisförmigen Himmelskörper."
+  },
+  {
+    "id": 12,
+    "title": "Werk 12",
+    "type": "Malerei",
+    "category": "malerei",
+    "full": "assets/artworks/12_blue-red-abstract.webp",
+    "thumbnail": "assets/thumbs/12_blue-red-abstract.webp",
+    "width": 1475,
+    "height": 2015,
+    "description": "Malerei aus ineinanderfließenden Formen in Blau, Violett und Rot."
+  },
+  {
+    "id": 6,
+    "title": "Werk 06",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/06_stone-wall-creature.webp",
+    "thumbnail": "assets/thumbs/06_stone-wall-creature.webp",
+    "width": 1387,
+    "height": 1064,
+    "description": "Tintenzeichnung eines surrealen Kopfes, eingerahmt von gemusterten Steinblöcken."
+  },
+  {
+    "id": 2,
+    "title": "Werk 02",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/02_mechanical-figure.webp",
+    "thumbnail": "assets/thumbs/02_mechanical-figure.webp",
+    "width": 858,
+    "height": 1054,
+    "description": "Schwarz-Weiß-Zeichnung einer zylindrischen, beinartigen mechanischen Figur."
+  },
+  {
+    "id": 10,
+    "title": "Werk 10",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/10_infinite-corridor.webp",
+    "thumbnail": "assets/thumbs/10_infinite-corridor.webp",
+    "width": 1012,
+    "height": 1513,
+    "description": "Schwarz-Weiß-Zeichnung einer perspektivischen Folge von Architekturformen."
+  },
+  {
+    "id": 7,
+    "title": "Werk 07",
+    "type": "Zeichnung",
+    "category": "zeichnung",
+    "full": "assets/artworks/07_organic-figure-ink.webp",
+    "thumbnail": "assets/thumbs/07_organic-figure-ink.webp",
+    "width": 1044,
+    "height": 1422,
+    "description": "Schwarz-Weiß-Zeichnung einer vielschichtigen organischen Figur mit spiraliger Kopfform."
+  }
+]

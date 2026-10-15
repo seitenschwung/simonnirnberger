@@ -1,9 +1,5 @@
+# Allowlist: nur was ins Image gehört, landet im Build-Kontext.
 *
 !Dockerfile
 !nginx/
-!package.json
-!package-lock.json
-!index.html
-!vite.config.js
-!src/
-!public/
+!site/

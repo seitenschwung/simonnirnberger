@@ -1,49 +1,53 @@
 # simonnirnberger
 
-Statische Webseite, ausgeliefert per nginx in einem Docker-Container mit minimalen Rechten.
-Gedacht für das Deployment über [Coolify](https://coolify.io).
+Portfolio von Simon Ernst Nirnberger – Zeichnung und Malerei. Statische Seite ohne Bibliotheken,
+Tracking oder externe Fonts, ausgeliefert per nginx in einem Docker-Container mit minimalen Rechten
+und über [Coolify](https://coolify.io) deployt.
 
 ## Struktur
 
 ```
 .
-├── Dockerfile          # Baut mit Node (Vite), liefert dist/ mit nginx-unprivileged aus (UID 101)
-├── docker-compose.yml  # Laufzeit-Härtung (read-only, keine Capabilities, Limits)
-├── .dockerignore       # Nur Dockerfile, nginx/ und die Vite-Quellen landen im Build-Kontext
-├── nginx/
-│   └── default.conf    # Server-Konfiguration: Port 8080, Security-Header, /healthz
-├── index.html, src/    # Die Landingpage (Vite + Three.js)
-└── public/             # Statische Dateien, unverändert kopiert (favicon, 404-Seite)
+├── site/                    # Die Webseite, genau so wie sie ausgeliefert wird
+│   ├── index.html           # Struktur, Texte, SEO, Abschnitte
+│   ├── styles.css           # Farben, Typografie, Layout, Animationen
+│   ├── app.js               # Galerie, Menü, Bildbetrachter, Scroll-Effekte
+│   ├── artworks.json        # Metadaten der 13 Werke (Export, siehe unten)
+│   ├── 404.html, 404.css    # Fehlerseite
+│   └── assets/
+│       ├── artworks/        # Werke in voller Auflösung (WebP)
+│       ├── thumbs/          # Galerie-Vorschauen (WebP)
+│       ├── favicon.svg
+│       └── social-preview.jpg
+├── nginx/default.conf       # Port 8080, Security-Header (CSP), Caching, /healthz
+├── Dockerfile               # nginx-unprivileged (UID 101), kopiert site/
+├── docker-compose.yml       # Laufzeit-Härtung (read-only, keine Capabilities, Limits)
+└── scripts/
+    ├── preview.mjs          # lokale Vorschau mit den nginx-Headern
+    ├── check-site-files.sh  # prüft, ob jede verlinkte Datei existiert
+    └── coolify-deploy.sh    # Deploy und Smoke-Tests (von der Pipeline aufgerufen)
 ```
 
-## Blob einstellen (`#controls`)
+Es gibt keinen Build-Schritt: Was in `site/` liegt, wird ausgeliefert.
 
-Mit `#controls` am Ende der Adresse (z. B. `https://www.simonernstnirnberger.at/#controls`)
-erscheint oben rechts ein Panel. Ohne den Zusatz wird es nicht einmal geladen.
+## Inhalte pflegen
 
-- **Farben:** Papier und Tinte. Die Textfarben werden daraus berechnet.
-- **Form:** Klumpengröße, Fließtempo, Unruhe oben/unten, Drehung, Geometrie-Detail.
-- **Tinte & Strich:** handgemachter Look (ausgefranster Rand, fleckige Tinte) und
-  Zeichentrick-Zittern („boiling line“) mit einstellbaren Zeichnungen pro Sekunde.
-- **Reaktion:** Der Blob *zieht sich zum Cursor hin* oder *weicht zurück* (oder *aus*);
-  Stärke, Reichweite, Form; Klick/Tippen auf den Blob lässt ihn zucken.
-- **Zucken:** an/aus, Stärke, Abklingzeit, Pausen, Sprung, Zacken; Knopf *Jetzt zucken*.
-- **Größe & Position:** Größe und Position oben, Größe unten.
-- **Scroll:** Trägheit; *Fortschritt manuell* zeigt jeden Zustand ohne zu scrollen.
-- **Bewegung:** Pause, Tempo, Papierkorn.
-- **Augen:** sichtbar, folgen dem Cursor, Blickweite, Blinzeln; *werden nervös*, je näher der
-  Blob kommt (größer, kleine Pupillen, schnelleres Blinzeln, Blicke zum Blob); *bleiben am Ende
-  übrig*, wenn alles schwarz ist; Knopf *Jetzt blinzeln*.
-- **Qualität:** automatisch (passt Auflösung, Kantenglättung und Geometrie an die Bildrate an)
-  oder fest; zeigt die aktuelle Stufe und Bilder pro Sekunde.
-
-Ohne WebGL (oder solange es lädt) zeigt die Seite einen statischen Tinten-Blob, der beim
-Scrollen trotzdem wächst.
-
-Änderungen bleiben nur in diesem Browser gespeichert. **Exportieren (JSON)** lädt sie als Datei
-herunter, **Importieren (JSON)** lädt so eine Datei wieder. **Werte kopieren** legt dasselbe JSON
-in die Zwischenablage. Für alle Besucher gelten sie erst, wenn die Werte in `CONFIG` in
-`src/main.js` übernommen und deployt werden. **Zurücksetzen** stellt die Standardwerte wieder her.
+- **Werke:** Die Liste `works` ganz oben in `site/app.js` steuert die Galerie. `site/artworks.json`
+  enthält dieselben Daten als Export: beide synchron halten. Für den Fallback ohne JavaScript auch die
+  `<noscript>`-Links in `site/index.html` anpassen.
+- **Neues oder ersetztes Bild:** volle Auflösung nach `assets/artworks/`, Vorschau nach
+  `assets/thumbs/`, jeweils als WebP. Ein ersetztes Bild bekommt einen **neuen Dateinamen**, weil
+  Bilder eine Woche im Browser gecacht werden.
+- **Titelbild:** wird im Hero-HTML, in `styles.css` (Hintergrund) und im Preload in `index.html`
+  referenziert.
+- **Noch offen vor dem Livegang:** „Werk 01“ usw. sind Platzhalter, keine offiziellen Titel. Die
+  Kuratierungssätze sind Vorschläge, keine Künstlerzitate. Es fehlen noch die echte Biografie, die
+  Kontaktadresse und das Impressum (österreichisches Recht).
+- **Domain:** `canonical`, `og:url` und `og:image` in `index.html` zeigen auf
+  `https://simonernstnirnberger.at/`. Bei einer anderen endgültigen Domain anpassen.
+- **Einzelne Werke verlinken:** In der Großansicht „Link kopieren“; `?werk=13` öffnet Werk 13.
+- **Bewegung:** „Bewegung reduzieren“ im System oder Datensparmodus schaltet die Scroll-Sequenz ab;
+  alle Werke bleiben sichtbar und bedienbar.
 
 ## Least Privilege
 
@@ -62,7 +66,8 @@ in die Zwischenablage. Für alle Besucher gelten sie erst, wenn die Werte in `CO
 ## Lokal testen
 
 ```sh
-npm install && npm run dev          # Entwicklung: http://localhost:5173
+node scripts/preview.mjs            # ohne Docker: http://localhost:8080 (gleiche Header/CSP wie nginx)
+scripts/check-site-files.sh         # alle verlinkten Dateien vorhanden?
 docker build -t simonnirnberger .   # Produktions-Image
 docker run --rm -p 8080:8080 --read-only --tmpfs /tmp simonnirnberger
 # http://localhost:8080, http://localhost:8080/healthz, http://localhost:8080/version.txt
@@ -72,7 +77,8 @@ docker run --rm -p 8080:8080 --read-only --tmpfs /tmp simonnirnberger
 
 Coolify baut nicht selbst. `.github/workflows/ci.yml` macht bei jedem Push und PR:
 
-1. **Seite bauen** (`npm ci`, `npm run build`, keine externen URLs).
+1. **Seite prüfen**: JavaScript- und JSON-Syntax, jede verlinkte Datei vorhanden, keine Anfragen an
+   fremde Hosts (die CSP erlaubt nur die eigene Domain).
 2. **Docker-Image** bauen und im gehärteten Container testen: Seite, Assets, 404, CSP-Header,
    `/version.txt` = Commit, nginx als UID 101.
 
