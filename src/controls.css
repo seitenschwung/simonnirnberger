@@ -1,0 +1,41 @@
+/* Panel at /#controls. lil-gui's own stylesheet is bundled (not injected),
+   so it passes the strict Content-Security-Policy. */
+.blob-controls {
+  --font-family: 'Figtree', system-ui, sans-serif;
+  --font-size: 12px;
+  --background-color: rgb(20 19 19 / 0.94);
+  --widget-color: #2b2928;
+  --hover-color: #3a3735;
+  --focus-color: #4a4643;
+  --number-color: #d7d3c9;
+  --string-color: #d7d3c9;
+  --text-color: #ebe6dc;
+  --title-background-color: #000;
+  z-index: 10;
+  mix-blend-mode: normal;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+.blob-controls.lil-auto-place {
+  top: 16px;
+  right: 16px;
+}
+
+.blob-controls[data-note]::before {
+  content: attr(data-note);
+  display: block;
+  padding: 6px 8px;
+  color: #d7d3c9;
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .blob-controls.lil-auto-place {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    width: auto !important;
+    max-height: 60vh;
+  }
+}
