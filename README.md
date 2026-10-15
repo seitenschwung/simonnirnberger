@@ -33,20 +33,37 @@ Gedacht für das Deployment über [Coolify](https://coolify.io).
 ## Lokal testen
 
 ```sh
-docker compose build
-docker compose run --rm -p 8080:8080 web
-# http://localhost:8080 und http://localhost:8080/healthz
+npm install && npm run dev          # Entwicklung: http://localhost:5173
+docker build -t simonnirnberger .   # Produktions-Image
+docker run --rm -p 8080:8080 --read-only --tmpfs /tmp simonnirnberger
+# http://localhost:8080, http://localhost:8080/healthz, http://localhost:8080/version.txt
 ```
 
-## Deployment mit Coolify
+## Deployment (GitHub Actions → Coolify)
 
-1. In Coolify: **New Resource → Public/Private Repository** und dieses Repo wählen.
-2. **Build Pack: Docker Compose** wählen (nutzt `docker-compose.yml` mit allen Härtungen).
-3. Beim Service `web` die Domain eintragen (z. B. `https://simonnirnberger.de:8080` bzw.
-   Port 8080 angeben). Coolify erzeugt TLS-Zertifikate und routet über seinen Proxy.
-4. Deployen. Der Healthcheck `/healthz` zeigt Coolify, wann der Container bereit ist.
+Coolify baut nicht selbst. `.github/workflows/ci.yml` macht bei jedem Push und PR:
 
-Alternativ geht auch **Build Pack: Dockerfile** mit *Ports Exposes* `8080`. Dann gelten
-nur die Härtungen aus dem `Dockerfile`; `read_only`, `cap_drop` usw. müssten in Coolify
-unter *Custom Docker Options* ergänzt werden, z. B.
-`--read-only --tmpfs /tmp:size=16m,noexec,nosuid,nodev --cap-drop=ALL --security-opt=no-new-privileges`.
+1. **Seite bauen** (`npm ci`, `npm run build`, keine externen URLs).
+2. **Docker-Image** bauen und im gehärteten Container testen: Seite, Assets, 404, CSP-Header,
+   `/version.txt` = Commit, nginx als UID 101.
+
+Nur auf `main` danach:
+
+3. **Image veröffentlichen**: genau das getestete Image nach
+   `ghcr.io/seitenschwung/simonnirnberger:<commit>` (und `:main`).
+4. **Deploy**: Der Runner tritt per Tailscale dem Tailnet bei, `scripts/coolify-deploy.sh` setzt in
+   Coolify `IMAGE_TAG=<commit>`, startet den Deploy, wartet, bis `APP_URL/version.txt` genau diesen
+   Commit zeigt, und prüft Seite, Assets, `/healthz` und 404. Schlägt das fehl, wird automatisch die
+   vorher laufende Version wieder ausgerollt.
+
+**Einrichtung (einmalig)**
+
+- GitHub, *Settings → Secrets and variables → Actions*:
+  - Secrets (oder Org-Secrets): `COOLIFY_URL`, `COOLIFY_TOKEN`, `TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET`
+  - Variablen: `COOLIFY_APP_UUID` (aus der Coolify-Adresse, Teil hinter `/application/`),
+    `APP_URL` (z. B. `https://simonnirnberger.de`)
+- Coolify-Ressource: **Build Pack Docker Compose** aus diesem Repo (`docker-compose.yml`),
+  Domain beim Service `web` mit Port 8080 (`https://…:8080`), Umgebungsvariable `IMAGE_TAG=main`,
+  **Auto Deploy aus** (das übernimmt die Pipeline).
+- Der Server braucht Lesezugriff auf die Registry: `docker login ghcr.io` mit einem Token mit
+  `read:packages` (einmal, gilt für alle Pakete der Organisation).

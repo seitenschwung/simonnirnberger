@@ -29,7 +29,10 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 # Webinhalte gehören root und sind für nginx nur lesbar.
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist/ /usr/share/nginx/html/
-RUN chown -R root:root /etc/nginx/conf.d /usr/share/nginx/html \
+# Commit dieses Builds: Die Pipeline prüft nach dem Deploy, dass genau er läuft.
+ARG APP_VERSION=dev
+RUN printf '%s\n' "$APP_VERSION" > /usr/share/nginx/html/version.txt \
+ && chown -R root:root /etc/nginx/conf.d /usr/share/nginx/html \
  && chmod 0444 /etc/nginx/conf.d/default.conf \
  && find /usr/share/nginx/html -type d -exec chmod 0555 {} + \
  && find /usr/share/nginx/html -type f -exec chmod 0444 {} +

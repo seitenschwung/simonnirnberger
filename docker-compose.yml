@@ -1,10 +1,10 @@
-# Für Coolify: Build Pack "Docker Compose" wählen und die Domain
-# dem Service "web" (Port 8080) zuweisen. Coolify übernimmt TLS & Routing.
+# Für Coolify: Build Pack "Docker Compose" wählen und die Domain dem Service "web"
+# mit Port 8080 zuweisen (https://…:8080). Coolify übernimmt TLS & Routing.
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # Coolify baut nicht selbst: Die Pipeline baut und testet das Image, legt es in die
+    # GitHub-Registry und setzt vor jedem Deploy IMAGE_TAG (Umgebungsvariable in Coolify).
+    image: ghcr.io/seitenschwung/simonnirnberger:${IMAGE_TAG:-main}
     restart: unless-stopped
     expose:
       - "8080"
