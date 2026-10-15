@@ -16,6 +16,24 @@ Gedacht für das Deployment über [Coolify](https://coolify.io).
 └── public/             # Statische Dateien, unverändert kopiert (favicon, 404-Seite)
 ```
 
+## Blob einstellen (`#controls`)
+
+Mit `#controls` am Ende der Adresse (z. B. `https://www.simonernstnirnberger.at/#controls`)
+erscheint oben rechts ein Panel. Ohne den Zusatz wird es nicht einmal geladen.
+
+- **Farben:** Papier und Tinte. Die Textfarben werden daraus berechnet.
+- **Form:** Klumpengröße, Fließtempo, Unruhe oben/unten, Drehung, Geometrie-Detail.
+- **Zucken:** an/aus, Stärke, Abklingzeit, Pausen, Sprung, Zacken; Knopf *Jetzt zucken*.
+- **Größe & Position:** Größe und Position oben, Größe unten.
+- **Scroll:** Trägheit; *Fortschritt manuell* zeigt jeden Zustand ohne zu scrollen.
+- **Bewegung:** Pause, Tempo, Papierkorn.
+- **Augen:** sichtbar, folgen dem Cursor, Blickweite, Blinzeln; Knopf *Jetzt blinzeln*.
+
+Änderungen bleiben nur in diesem Browser gespeichert. **Exportieren (JSON)** lädt sie als Datei
+herunter, **Importieren (JSON)** lädt so eine Datei wieder. **Werte kopieren** legt dasselbe JSON
+in die Zwischenablage. Für alle Besucher gelten sie erst, wenn die Werte in `CONFIG` in
+`src/main.js` übernommen und deployt werden. **Zurücksetzen** stellt die Standardwerte wieder her.
+
 ## Least Privilege
 
 | Maßnahme | Wo |
