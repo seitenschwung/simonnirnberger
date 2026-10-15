@@ -1,5 +1,9 @@
-# Nur Dockerfile, nginx/ und site/ werden ins Image gebraucht.
 *
 !Dockerfile
 !nginx/
-!site/
+!package.json
+!package-lock.json
+!index.html
+!vite.config.js
+!src/
+!public/
