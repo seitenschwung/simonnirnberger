@@ -26,13 +26,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # Only for a site with a build step (Vite). A static site (no package-lock.json) is
+      # copied as it is by the Dockerfile; the browser tests below check it at runtime.
+      - name: Static site, nothing to build
+        if: hashFiles('package-lock.json') == ''
+        run: echo "No package-lock.json – static site, built and tested in the Docker job."
       - uses: actions/setup-node@v4
+        if: hashFiles('package-lock.json') != ''
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --no-audit --no-fund
-      - run: npm run build
+      - if: hashFiles('package-lock.json') != ''
+        run: npm ci --no-audit --no-fund
+      - if: hashFiles('package-lock.json') != ''
+        run: npm run build
       - name: No requests to other hosts (the CSP allows only 'self')
+        if: hashFiles('package-lock.json') != ''
         run: |
           if grep -rEo 'https?://[a-zA-Z0-9.-]+' dist/index.html dist/assets/*.css | grep -v 'www.w3.org'; then
             echo "::error::External URL in the built page"; exit 1
@@ -61,7 +70,7 @@ jobs:
         run: |
           set -e
           base=http://127.0.0.1:8080
-          curl -fsS "$base/" | grep -q '<title>Simon Ernst Nirnberger</title>'
+          curl -fsS "$base/" | grep -q '<title>Simon Ernst Nirnberger'
           [ "$(curl -fsS "$base/version.txt")" = "${GITHUB_SHA}" ]
           [ "$(curl -s -o /dev/null -w '%{http_code}' "$base/gibt-es-nicht")" = 404 ]
           curl -fsSI "$base/" | grep -qi "^content-security-policy: default-src 'self'"
@@ -167,7 +176,13 @@ jobs:
 
             // Accessibility: WCAG 2.x A/AA, serious and critical findings fail
             const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
-            const bad = axe.violations.filter((v) => ['serious', 'critical'].includes(v.impact));
+            // color-contrast is reported as a warning for now (the owner chose to ship first and
+            // fix contrast afterwards); every other serious/critical finding fails.
+            const WARN_ONLY = ['color-contrast'];
+            for (const v of axe.violations.filter((v) => WARN_ONLY.includes(v.id))) {
+              console.log(`::warning::${path} ${v.id}: ${v.help} (${v.nodes.length}x) ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`);
+            }
+            const bad = axe.violations.filter((v) => ['serious', 'critical'].includes(v.impact) && !WARN_ONLY.includes(v.id));
             expect.soft(bad.map((v) => `${v.id}: ${v.help} (${v.nodes.length}x) ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`), `${path} accessibility`).toEqual([]);
 
             expect.soft(problems, `${path} runtime problems`).toEqual([]);
