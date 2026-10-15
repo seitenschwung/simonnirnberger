@@ -30,24 +30,26 @@ npm run build     # erzeugt dist/
 npm run preview   # dist/ unter http://localhost:4173, mit den CSP-Headern aus nginx/default.conf
 ```
 
-Zur Laufzeit gibt es keine externen Requests: three, gsap, lenis und die Schrift (Nosifer via
-`@fontsource/nosifer`) werden mitgebaut.
+Zur Laufzeit gibt es keine externen Requests: three, gsap, lenis und die Schriften (Rock Salt
+für den Namen, Figtree für die Labels, beide via `@fontsource`) werden mitgebaut.
 
-### Stimmung anpassen
+### Anpassen
 
 Alle Werte stehen oben in `src/main.js` im Objekt `CONFIG`:
 
 | Wert | Wirkung |
 | --- | --- |
-| `coronaColor` | Farbe der Corona |
-| `rimPower` | Schärfe des Rings (höher = dünner) |
-| `rimIntensity`, `rimFalloff` | Helligkeit der Corona und wie stark sie beim Wachsen abdunkelt |
-| `bloom.strength`, `bloom.radius` | Wie weit das Glühen ins Schwarz blutet |
-| `crush` | Kontrastkurve; höher = weniger Farbschleier |
+| `paper`, `ink` | Papier- und Tintenfarbe (Papier auch in `--paper` in `style.css`) |
+| `startSize`, `startX` | Größe und Position des Blobs oben |
+| `endCover` | Wie weit der Blob am Ende über den Bildschirmrand hinausreicht |
 | `energy` | Grundunruhe oben → unten |
 | `jolt.amount`, `jolt.decay` | Stärke und Abklingzeit der Zuckungen |
 | `jolt.minDelay`, `jolt.maxDelay` | Abstand zwischen den Zuckungen (Sekunden) |
-| `scale` | Größe der Kugel oben → unten |
+| `grain` | Papierkorn |
+| `eyes.reach`, `eyes.blinkMin`, `eyes.blinkMax` | Wie weit die Augen schauen und wie oft sie blinzeln |
+
+Die Textfarben in `style.css` sind für `mix-blend-mode: difference` berechnet (siehe Kommentar dort):
+Wer `paper` oder `ink` ändert, muss `--name` und `--muted` mit anpassen.
 
 Noise-Frequenz und -Geschwindigkeit stehen kommentiert in `src/shaders/sphere.vert`.
 

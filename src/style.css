@@ -1,15 +1,30 @@
+/*
+ * Farben mit mix-blend-mode: difference
+ * -------------------------------------
+ * Text und Labels werden per "difference" mit dem Hintergrund verrechnet,
+ * damit sie auf dem schwarzen Blob hell und auf dem Papier dunkel sind.
+ * Sichtbare Farbe auf Papier = |Papier - Textfarbe|. Deshalb ist
+ *   --name  = Papier - Tinte  -> erscheint auf Papier als Tinte (#141313)
+ *   --muted = Papier - Grau   -> erscheint auf Papier als Grau  (#57544f)
+ * Auf Schwarz erscheinen beide in ihrer eigenen (hellen) Farbe.
+ */
 :root {
-  --bg: #000;
-  --name: #ece6e1;
+  --paper: #ebe6dc;
+  --ink: #141313;
+  --name: #d7d3c9;
+  --muted: #94928d;
+  --gutter: 5vw;
 }
 
-html, body {
+html,
+body {
   margin: 0;
-  background: var(--bg);
+  background: var(--paper);
 }
 
 body {
   overflow-x: hidden;
+  font-family: 'Figtree', system-ui, sans-serif;
 }
 
 #scene {
@@ -21,37 +36,160 @@ body {
   pointer-events: none;
 }
 
-.name {
+.name,
+.labels,
+.coda {
   position: fixed;
-  top: 50%;
-  left: 5vw;
   z-index: 1;
-  margin: 0;
-  transform: translateY(-50%);
-  font-family: 'Nosifer', serif;
-  font-weight: 400;
-  font-size: var(--name-size, 7vw);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--name);
-  /* Kehrt sich um, sobald die Corona hinter dem Namen liegt. */
   mix-blend-mode: difference;
+}
+
+/* --- Name ---------------------------------------------------------------- */
+
+.name {
+  top: 50%;
+  left: var(--gutter);
+  margin: 0;
+  transform: translateY(-52%);
+  font-family: 'Rock Salt', cursive;
+  font-weight: 400;
+  color: var(--name);
+  line-height: 1;
   pointer-events: none;
   user-select: none;
 }
 
-.name span {
+.line {
   display: block;
+  white-space: nowrap;
 }
 
+.line--big {
+  font-size: 6.4vw;
+}
+
+.line--small {
+  font-size: 3.4vw;
+  margin: 0.18em 0 0.1em 0.75em;
+}
+
+/* Die Augen sitzen im "o" von Simon. */
+.o {
+  position: relative;
+  display: inline-block;
+}
+
+.eyes {
+  position: absolute;
+  left: 17%;
+  top: 30%;
+  width: 66%;
+  height: auto;
+  overflow: visible;
+}
+
+.eyes__ball {
+  fill: #000; /* erscheint als Papier */
+  stroke: var(--name); /* erscheint als Tinte */
+  stroke-width: 2;
+}
+
+.eyes__pupil {
+  fill: var(--name);
+}
+
+.eyes__lids {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* --- Labels unten --------------------------------------------------------- */
+
+.labels {
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover,
+.link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.coda {
+  left: 50%;
+  bottom: 48px;
+  margin: 0;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+}
+
+/* --- Scroll-Strecke ------------------------------------------------------- */
+
 main {
+  position: relative;
   height: 400vh;
 }
 
-/* Mobil: Name lesbar halten, der Platz links ist schmaler. */
+.anchor {
+  position: absolute;
+  bottom: 0;
+  height: 100vh;
+  width: 1px;
+}
+
+/* --- Mobil ---------------------------------------------------------------- */
+
 @media (max-width: 768px) {
+  :root {
+    --gutter: 6vw;
+  }
+
   .name {
-    left: 6vw;
-    font-size: var(--name-size-mobile, 9.5vw);
+    top: 34%;
+  }
+
+  .line--big {
+    font-size: 10.5vw;
+  }
+
+  .line--small {
+    font-size: 6vw;
+  }
+
+  .labels {
+    bottom: 28px;
+    font-size: 13px;
+  }
+
+  .label {
+    letter-spacing: 0.12em;
+  }
+
+  .coda {
+    bottom: 28px;
+    font-size: 13px;
+    white-space: nowrap;
   }
 }

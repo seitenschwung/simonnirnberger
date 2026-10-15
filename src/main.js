@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
-import '@fontsource/nosifer';
+import '@fontsource/rock-salt';
+import '@fontsource/figtree/400.css';
 import './style.css';
 
 import noiseGlsl from './shaders/noise.glsl?raw';
@@ -21,13 +21,12 @@ import finalFrag from './shaders/final.frag?raw';
 // Mood knobs. Everything you'd want to tweak lives here.
 // ---------------------------------------------------------------------------
 const CONFIG = {
-  coronaColor: '#991a1f', // dark blood red
-  rimPower: 4.5, // corona sharpness (higher = thinner ring)
-  rimIntensity: 0.35, // corona brightness before bloom (bloom adds a lot)
-  rimFalloff: 1.0, // how much the corona dims as the sphere grows (0 = not)
-  energy: [0.15, 0.4], // base writhing: top of page -> bottom
-  scale: [1, 4], // sphere size: top -> bottom
-  startX: 1.8, // sphere x at the top (world units, 0 = centre)
+  paper: '#ebe6dc', // background (keep in sync with --paper in style.css)
+  ink: '#141313', // blob colour
+  energy: [0.12, 0.3], // base writhing: top of page -> bottom
+  startSize: 0.29, // blob radius at the top, as a share of half the screen height
+  endCover: 1.08, // at the bottom the blob covers the screen with this margin
+  startX: 0.54, // blob centre at the top, as a share of half the screen width
   jolt: {
     amount: 0.35, // peak uJolt of a spasm
     decay: 0.4, // seconds until it has settled again
@@ -35,11 +34,12 @@ const CONFIG = {
     maxDelay: 3.0,
     timeKick: 0.15, // jump in noise time per spasm (the "snap")
   },
-  bloom: { strength: 0.9, radius: 0.35, threshold: 0 },
-  aberration: 0.012,
-  grain: 0.05,
-  crush: 1.6, // >1 pushes dark glow back to black (less colour haze)
-  particles: { desktop: 1400, mobile: 500, color: '#8a8380' },
+  grain: 0.035,
+  eyes: {
+    reach: 2.6, // how far the pupils move (SVG units)
+    blinkMin: 2.5, // random pause between blinks, seconds
+    blinkMax: 7,
+  },
 };
 
 gsap.registerPlugin(ScrollTrigger);
@@ -50,142 +50,83 @@ const isMobile = window.matchMedia('(max-width: 768px), (pointer: coarse)').matc
 // Lets the vertex shader use `#include <noise>`.
 THREE.ShaderChunk.noise = noiseGlsl;
 
+const BASE_RADIUS = 1.2;
+// Smallest radius the noise can pull the surface in to (at full energy).
+const MIN_RADIUS = BASE_RADIUS - CONFIG.energy[1];
+
 // ---------------------------------------------------------------------------
 // Renderer, scene, camera
 // ---------------------------------------------------------------------------
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({
   canvas,
-  antialias: false, // the composer renders to its own targets anyway
+  antialias: false, // the composer renders to its own (multisampled) targets
   powerPreference: 'high-performance',
 });
-renderer.setClearColor(0x000000, 1);
+// Clear to transparent; the grain pass lays the paper underneath. Clearing
+// straight to the paper colour would get sRGB-converted twice by the composer.
+renderer.setClearColor(0x000000, 0);
 
 const scene = new THREE.Scene();
 
-// Narrow FOV from far away: little perspective distortion, and the camera
-// stays outside the sphere even at full scale (radius 4.8 + displacement).
-const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
-camera.position.set(0, 0, 10);
+// Narrow FOV from far away: hardly any perspective distortion, and the
+// camera stays outside the blob even when it fills the whole screen.
+const camera = new THREE.PerspectiveCamera(17.3, 1, 0.1, 100);
+camera.position.set(0, 0, 14);
+// Needed before the first render: lookAtBlob() projects through this camera.
+camera.updateMatrixWorld();
 
 // ---------------------------------------------------------------------------
-// The dark sun
+// The blob
 // ---------------------------------------------------------------------------
-const sphereUniforms = {
+const blobUniforms = {
   uTime: { value: reducedMotion ? 3.0 : 0 }, // frozen but not a perfect ball
   uEnergy: { value: CONFIG.energy[0] },
   uJolt: { value: 0 },
   uJoltSeed: { value: 0 },
-  uColor: { value: new THREE.Color(CONFIG.coronaColor) },
-  uRimPower: { value: CONFIG.rimPower },
-  uIntensity: { value: CONFIG.rimIntensity },
+  uInk: { value: new THREE.Color(CONFIG.ink) },
 };
 
-const sphere = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(1.2, isMobile ? 64 : 128),
+const blob = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(BASE_RADIUS, isMobile ? 64 : 128),
   new THREE.ShaderMaterial({
-    uniforms: sphereUniforms,
+    uniforms: blobUniforms,
     vertexShader: sphereVert,
     fragmentShader: sphereFrag,
   }),
 );
-scene.add(sphere);
+scene.add(blob);
 
 // ---------------------------------------------------------------------------
-// Particles slowly pulled into the sphere
+// Post-processing: render (multisampled) -> output (sRGB) -> paper + grain
 // ---------------------------------------------------------------------------
-const particleCount = isMobile ? CONFIG.particles.mobile : CONFIG.particles.desktop;
-const particlePositions = new Float32Array(particleCount * 3);
-const particleSpeeds = new Float32Array(particleCount);
-const particleGeometry = new THREE.BufferGeometry();
-particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-
-const particles = new THREE.Points(
-  particleGeometry,
-  new THREE.PointsMaterial({
-    color: CONFIG.particles.color,
-    size: 0.018,
-    transparent: true,
-    opacity: 0.35,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-  }),
+const composer = new EffectComposer(
+  renderer,
+  new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: isMobile ? 2 : 4 }),
 );
-scene.add(particles);
-
-const tmp = new THREE.Vector3();
-
-function spawnParticle(i, center, minR, maxR) {
-  tmp.randomDirection().multiplyScalar(THREE.MathUtils.randFloat(minR, maxR));
-  particlePositions[i * 3] = center.x + tmp.x;
-  particlePositions[i * 3 + 1] = center.y + tmp.y;
-  particlePositions[i * 3 + 2] = center.z + tmp.z * 0.5; // flatter towards camera
-  particleSpeeds[i] = THREE.MathUtils.randFloat(0.15, 0.5);
-}
-
-function initParticles() {
-  for (let i = 0; i < particleCount; i++) spawnParticle(i, sphere.position, 2, 9);
-  particleGeometry.attributes.position.needsUpdate = true;
-}
-
-function updateParticles(dt) {
-  const center = sphere.position;
-  const radius = 1.2 * sphere.scale.x;
-  for (let i = 0; i < particleCount; i++) {
-    const ix = i * 3;
-    const dx = center.x - particlePositions[ix];
-    const dy = center.y - particlePositions[ix + 1];
-    const dz = center.z - particlePositions[ix + 2];
-    const dist = Math.hypot(dx, dy, dz);
-
-    if (dist < radius * 0.98) {
-      spawnParticle(i, center, radius + 3, radius + 9);
-      continue;
-    }
-
-    // Faster the closer they get; a little swirl around the z axis.
-    const pull = (particleSpeeds[i] * dt * (1 + 3 / dist)) / dist;
-    const swirl = pull * 0.35;
-    particlePositions[ix] += dx * pull - dy * swirl;
-    particlePositions[ix + 1] += dy * pull + dx * swirl;
-    particlePositions[ix + 2] += dz * pull;
-  }
-  particleGeometry.attributes.position.needsUpdate = true;
-}
-
-// ---------------------------------------------------------------------------
-// Post-processing: bloom -> output (sRGB) -> aberration + grain
-// ---------------------------------------------------------------------------
-const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-
-const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(1, 1),
-  CONFIG.bloom.strength,
-  CONFIG.bloom.radius,
-  CONFIG.bloom.threshold,
-);
-composer.addPass(bloomPass);
 composer.addPass(new OutputPass());
 
-const finalPass = new ShaderPass({
+const paperSrgb = new THREE.Color(CONFIG.paper).getRGB({ r: 0, g: 0, b: 0 }, THREE.SRGBColorSpace);
+
+const grainPass = new ShaderPass({
   uniforms: {
     tDiffuse: { value: null },
     uResolution: { value: new THREE.Vector2(1, 1) },
     uTime: { value: 0 },
-    uAberration: { value: CONFIG.aberration },
     uGrain: { value: reducedMotion ? 0 : CONFIG.grain },
-    uCrush: { value: CONFIG.crush },
+    // Final pass runs after OutputPass, so it wants the raw sRGB values.
+    uPaper: { value: new THREE.Vector3(paperSrgb.r, paperSrgb.g, paperSrgb.b) },
   },
   vertexShader: passVert,
   fragmentShader: finalFrag,
 });
-composer.addPass(finalPass);
+composer.addPass(grainPass);
 
 // ---------------------------------------------------------------------------
-// Layout: where the sphere sits depends on the viewport shape
+// Layout: where the blob sits depends on the viewport shape
 // ---------------------------------------------------------------------------
-const layout = { x: CONFIG.startX, y: 0, scale: 1 };
+const layout = { x: 0, y: 0, startScale: 1, endScale: 4 };
 
 function resize() {
   const width = window.innerWidth;
@@ -196,33 +137,35 @@ function resize() {
   renderer.setSize(width, height, false);
   composer.setPixelRatio(pixelRatio);
   composer.setSize(width, height);
-  // Bloom at half resolution on mobile: much cheaper, looks the same.
-  if (isMobile) bloomPass.setSize((width * pixelRatio) / 2, (height * pixelRatio) / 2);
-  finalPass.uniforms.uResolution.value.set(width * pixelRatio, height * pixelRatio);
+  grainPass.uniforms.uResolution.value.set(width * pixelRatio, height * pixelRatio);
 
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
-  // Visible half-width at z = 0, so the sphere never starts off-screen.
+  // Visible half-size of the screen at z = 0, in world units.
   const halfH = camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   const halfW = halfH * camera.aspect;
+
   if (camera.aspect >= 1) {
-    layout.x = Math.min(CONFIG.startX, halfW * 0.5);
+    layout.x = halfW * CONFIG.startX;
     layout.y = 0;
-    layout.scale = Math.min(1, halfW / 2.6);
+    layout.startScale = (halfH * CONFIG.startSize) / BASE_RADIUS;
   } else {
-    // Portrait: the name takes the width, so the sun rises from below it.
+    // Portrait: the name takes the width, so the blob sits below it.
     layout.x = halfW * 0.3;
     layout.y = -halfH * 0.42;
-    layout.scale = Math.min(1, halfW / 1.7);
+    layout.startScale = Math.min(halfW * 0.42, halfH * CONFIG.startSize) / BASE_RADIUS;
   }
+
+  // Big enough that even its deepest dent still covers the screen corners.
+  layout.endScale = (Math.hypot(halfW, halfH) * CONFIG.endCover) / MIN_RADIUS;
 }
 
 window.addEventListener('resize', resize);
 resize();
 
 // ---------------------------------------------------------------------------
-// Scroll: sphere grows and drifts to the centre, the name stays put
+// Scroll: blob grows and drifts to the centre, the name stays put
 // ---------------------------------------------------------------------------
 const scroll = { progress: 0 };
 
@@ -235,16 +178,70 @@ if (!reducedMotion) {
   gsap.ticker.lagSmoothing(0);
 }
 
-gsap.to(scroll, {
-  progress: 1,
+const scrub = reducedMotion ? true : 1;
+const scrollRange = { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub };
+
+gsap.to(scroll, { progress: 1, ease: 'none', scrollTrigger: scrollRange });
+
+// Labels fade out early, the closing line fades in once the screen is ink.
+gsap.to('.labels', {
+  autoAlpha: 0,
   ease: 'none',
-  scrollTrigger: {
-    trigger: 'main',
-    start: 'top top',
-    end: 'bottom bottom',
-    scrub: reducedMotion ? true : 1,
-  },
+  scrollTrigger: { ...scrollRange, end: '15% top' },
 });
+gsap.to('.coda', {
+  opacity: 1,
+  ease: 'none',
+  scrollTrigger: { ...scrollRange, start: '80% bottom' },
+});
+
+// "Zu den Werken": slow, heavy glide to the end instead of a jump.
+document.querySelector('.link').addEventListener('click', (event) => {
+  if (!lenis) return; // native anchor jump with reduced motion
+  event.preventDefault();
+  lenis.scrollTo('#werke', { duration: 3.5 });
+});
+
+// ---------------------------------------------------------------------------
+// The eyes in the "o": they watch the cursor (or the blob) and blink
+// ---------------------------------------------------------------------------
+const pupils = document.querySelector('.eyes__pupils');
+const lids = document.querySelector('.eyes__lids');
+const eyes = document.querySelector('.eyes');
+const lookAt = { x: 1, y: 0 }; // direction, starts towards the blob
+
+let pointerActive = false;
+let pointerTimer = null;
+
+// Pupils ease towards their target in the render loop (see updatePupils).
+const pupilPos = { x: 0, y: 0 };
+
+function updatePupils(dt) {
+  const k = 1 - Math.exp(-dt * 10); // frame-rate independent easing
+  pupilPos.x += (lookAt.x * CONFIG.eyes.reach - pupilPos.x) * k;
+  pupilPos.y += (lookAt.y * CONFIG.eyes.reach - pupilPos.y) * k;
+  pupils.setAttribute('transform', `translate(${pupilPos.x.toFixed(2)} ${pupilPos.y.toFixed(2)})`);
+}
+
+function lookTowards(clientX, clientY) {
+  const box = eyes.getBoundingClientRect();
+  const dx = clientX - (box.left + box.width / 2);
+  const dy = clientY - (box.top + box.height / 2);
+  const len = Math.hypot(dx, dy) || 1;
+  const strength = Math.min(len / 200, 1);
+  lookAt.x = (dx / len) * strength;
+  lookAt.y = (dy / len) * strength;
+}
+
+function lookAtBlob() {
+  const p = blob.position.clone().project(camera);
+  lookTowards(((p.x + 1) / 2) * window.innerWidth, ((1 - p.y) / 2) * window.innerHeight);
+}
+
+// A jolt makes the eyes glance back at the blob.
+function flinch() {
+  if (!pointerActive) lookAtBlob();
+}
 
 // ---------------------------------------------------------------------------
 // Energy jolts: random spasms on top of the slow noise
@@ -252,18 +249,39 @@ gsap.to(scroll, {
 function scheduleJolt() {
   const { amount, decay, minDelay, maxDelay, timeKick } = CONFIG.jolt;
   gsap.delayedCall(gsap.utils.random(minDelay, maxDelay), () => {
-    sphereUniforms.uJoltSeed.value = Math.random() * 100;
-    sphereUniforms.uTime.value += timeKick * Math.random();
+    blobUniforms.uJoltSeed.value = Math.random() * 100;
+    blobUniforms.uTime.value += timeKick * Math.random();
     gsap.fromTo(
-      sphereUniforms.uJolt,
+      blobUniforms.uJolt,
       { value: amount * gsap.utils.random(0.7, 1.2) },
       { value: 0, duration: decay, ease: 'expo.out', overwrite: true },
     );
+    flinch();
     scheduleJolt();
   });
 }
 
-if (!reducedMotion) scheduleJolt();
+function scheduleBlink() {
+  gsap.delayedCall(gsap.utils.random(CONFIG.eyes.blinkMin, CONFIG.eyes.blinkMax), () => {
+    gsap.to(lids, { scaleY: 0.08, duration: 0.07, yoyo: true, repeat: 1, ease: 'power2.in' });
+    scheduleBlink();
+  });
+}
+
+if (!reducedMotion) {
+  window.addEventListener('pointermove', (event) => {
+    pointerActive = true;
+    lookTowards(event.clientX, event.clientY);
+    clearTimeout(pointerTimer);
+    pointerTimer = setTimeout(() => {
+      pointerActive = false;
+      lookAtBlob();
+    }, 2500);
+  });
+
+  scheduleBlink();
+  scheduleJolt();
+}
 
 // ---------------------------------------------------------------------------
 // Render loop (driven by GSAP's ticker, shared with Lenis)
@@ -271,26 +289,25 @@ if (!reducedMotion) scheduleJolt();
 const lerp = THREE.MathUtils.lerp;
 
 function applyScroll() {
+  // Exponential growth reads as a steady "swallowing" rather than a late burst.
   const p = scroll.progress;
-  const s = lerp(CONFIG.scale[0], CONFIG.scale[1], p);
-  sphere.scale.setScalar(s * layout.scale);
-  // The rim band grows with the sphere; dim it so the colour stays minimal.
-  sphereUniforms.uIntensity.value = CONFIG.rimIntensity / Math.pow(s, CONFIG.rimFalloff);
-  sphere.position.set(lerp(layout.x, 0, p), lerp(layout.y, 0, p), 0);
-  sphereUniforms.uEnergy.value = lerp(CONFIG.energy[0], CONFIG.energy[1], p);
+  const scale = layout.startScale * Math.pow(layout.endScale / layout.startScale, p);
+  blob.scale.setScalar(scale);
+  blob.position.set(lerp(layout.x, 0, p), lerp(layout.y, 0, p), 0);
+  blobUniforms.uEnergy.value = lerp(CONFIG.energy[0], CONFIG.energy[1], p);
 }
 
 applyScroll();
-initParticles();
+lookAtBlob();
 
 gsap.ticker.add((time, deltaMs) => {
   const dt = Math.min(deltaMs / 1000, 0.05);
 
   if (!reducedMotion) {
-    sphereUniforms.uTime.value += dt;
-    finalPass.uniforms.uTime.value = time;
-    sphere.rotation.y += dt * 0.04;
-    updateParticles(dt);
+    blobUniforms.uTime.value += dt;
+    grainPass.uniforms.uTime.value = time;
+    blob.rotation.y += dt * 0.04;
+    updatePupils(dt);
   }
 
   applyScroll();
