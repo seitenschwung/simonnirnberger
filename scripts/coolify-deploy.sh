@@ -65,10 +65,30 @@ deployment="$(jq -r '.deployments[0].deployment_uuid // empty' "$WORK/body")"
 [ -n "$deployment" ] || { error "Coolify answered without a deployment id: $(head -c 300 "$WORK/body")"; exit 1; }
 echo "Coolify deployment ${deployment}"
 
+# Coolify's log, including the entries it marks as hidden (the actual errors often are);
+# raw if it is not the expected JSON. Secrets of the app are masked by Coolify itself.
 print_log() {
+  local lines
+  lines="$(jq -r '(.logs // "[]") | (fromjson? // []) | .[-120:][] | .output // empty' "$WORK/body" 2>/dev/null)"
+  [ -n "$lines" ] || lines="$(jq -r '.logs // empty' "$WORK/body" 2>/dev/null | tail -n 120)"
+  [ -n "$lines" ] || lines="$(head -c 4000 "$WORK/body")"
+  local stop; stop="$(openssl rand -hex 16)"
   echo "::group::Coolify deployment log (end)"
-  jq -r '(.logs // "[]") | (fromjson? // []) | map(select(.hidden != true)) | .[-80:][] | .output' "$WORK/body" 2>/dev/null \
-    || jq -r '.logs // ""' "$WORK/body" | tail -n 80
+  echo "::stop-commands::${stop}" # the log is printed as text, never read as workflow commands
+  printf '%s\n' "$lines"
+  echo "::${stop}::"
+  echo "::endgroup::"
+  # The last lines again as an annotation, visible on the run page without opening the log.
+  echo "::error title=Coolify deployment log::$(printf '%s' "$lines" | grep -v '^\s*$' | tail -n 8 | tr '\n' ' ' | tr -d ':%' | head -c 900)"
+}
+
+# What the outside sees for APP_URL: DNS and who signs the certificate.
+diagnose_domain() {
+  local host="${APP#*://}"; host="${host%%/*}"; host="${host%%:*}"
+  echo "::group::Domain ${host}"
+  echo "DNS (public):"; getent ahosts "$host" | awk '{print "  " $1}' | sort -u || echo "  does not resolve"
+  echo | openssl s_client -connect "${host}:443" -servername "$host" 2>/dev/null \
+    | openssl x509 -noout -subject -issuer -enddate 2>/dev/null | sed 's/^/  /' || echo "  no TLS answer"
   echo "::endgroup::"
 }
 
@@ -91,6 +111,7 @@ while :; do
     finished) break ;;
     failed|error|cancelled*)
       print_log
+      diagnose_domain
       error "Coolify deployment ${status} – the previous version keeps running unless Coolify already replaced it"
       exit 1 ;;
   esac
@@ -108,6 +129,7 @@ while [ $((SECONDS - start)) -lt "$SMOKE_TIMEOUT" ]; do
   sleep "${SMOKE_INTERVAL:-5}"
 done
 if [ "$running" != "$TAG" ]; then
+  diagnose_domain
   error "${APP} runs version '${running:-none}' instead of ${TAG} after ${SMOKE_TIMEOUT}s"
   exit 1
 fi
