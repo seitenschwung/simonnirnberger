@@ -7,15 +7,49 @@ Gedacht für das Deployment über [Coolify](https://coolify.io).
 
 ```
 .
-├── Dockerfile          # Image auf Basis von nginx-unprivileged (läuft als UID 101)
+├── index.html          # Einstiegsseite (Vite)
+├── src/
+│   ├── main.js         # Three.js-Szene, Scroll (GSAP + Lenis), Jolts, CONFIG mit allen Stellschrauben
+│   ├── style.css
+│   └── shaders/        # GLSL: Noise, Kugel (Vertex/Fragment), Post-Processing
+├── public/             # Wird unverändert kopiert (404-Seite, Favicon)
+├── vite.config.js      # Build nach dist/; `vite preview` sendet dieselben Header wie nginx
+├── Dockerfile          # Stage 1: Vite-Build als User "node"; Stage 2: nginx-unprivileged (UID 101)
 ├── docker-compose.yml  # Laufzeit-Härtung (read-only, keine Capabilities, Limits)
-├── .dockerignore       # Nur Dockerfile, nginx/ und site/ landen im Build-Kontext
-├── nginx/
-│   └── default.conf    # Server-Konfiguration: Port 8080, Security-Header, /healthz
-└── site/               # Die eigentliche Webseite (HTML, CSS, Bilder, ...)
+├── .dockerignore       # Allowlist für den Build-Kontext
+└── nginx/
+    └── default.conf    # Port 8080, Security-Header (CSP), Caching, /healthz
 ```
 
-Neue Inhalte einfach in `site/` ablegen.
+## Entwicklung
+
+```sh
+npm install
+npm run dev       # http://localhost:5173 (lauscht auf 0.0.0.0)
+npm run build     # erzeugt dist/
+npm run preview   # dist/ unter http://localhost:4173, mit den CSP-Headern aus nginx/default.conf
+```
+
+Zur Laufzeit gibt es keine externen Requests: three, gsap, lenis und die Schrift (Nosifer via
+`@fontsource/nosifer`) werden mitgebaut.
+
+### Stimmung anpassen
+
+Alle Werte stehen oben in `src/main.js` im Objekt `CONFIG`:
+
+| Wert | Wirkung |
+| --- | --- |
+| `coronaColor` | Farbe der Corona |
+| `rimPower` | Schärfe des Rings (höher = dünner) |
+| `rimIntensity`, `rimFalloff` | Helligkeit der Corona und wie stark sie beim Wachsen abdunkelt |
+| `bloom.strength`, `bloom.radius` | Wie weit das Glühen ins Schwarz blutet |
+| `crush` | Kontrastkurve; höher = weniger Farbschleier |
+| `energy` | Grundunruhe oben → unten |
+| `jolt.amount`, `jolt.decay` | Stärke und Abklingzeit der Zuckungen |
+| `jolt.minDelay`, `jolt.maxDelay` | Abstand zwischen den Zuckungen (Sekunden) |
+| `scale` | Größe der Kugel oben → unten |
+
+Noise-Frequenz und -Geschwindigkeit stehen kommentiert in `src/shaders/sphere.vert`.
 
 ## Least Privilege
 
