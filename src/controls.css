@@ -22,7 +22,8 @@
   right: 16px;
 }
 
-.blob-controls[data-note]::before {
+.blob-controls[data-note]::before,
+.blob-controls [data-note]::before {
   content: attr(data-note);
   display: block;
   padding: 6px 8px;
