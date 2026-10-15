@@ -1,5 +1,18 @@
 # syntax=docker/dockerfile:1
 
+# Stufe 1: die Seite mit Vite bauen (als User "node", nicht root).
+FROM node:22-alpine AS build
+WORKDIR /app
+RUN chown node:node /app
+USER node
+COPY --chown=node:node package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY --chown=node:node index.html vite.config.js ./
+COPY --chown=node:node src/ src/
+COPY --chown=node:node public/ public/
+RUN npm run build
+
+# Stufe 2: nur das fertige dist/ wird ausgeliefert – ohne Node, ohne Quellcode.
 # Statische Webseite, ausgeliefert von nginx ohne Root-Rechte.
 # Basis-Image: offizielles "unprivileged"-Image von nginx
 #   - läuft als User "nginx" (UID 101), nicht als root
@@ -15,7 +28,7 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Webinhalte gehören root und sind für nginx nur lesbar.
 RUN rm -rf /usr/share/nginx/html/*
-COPY site/ /usr/share/nginx/html/
+COPY --from=build /app/dist/ /usr/share/nginx/html/
 RUN chown -R root:root /etc/nginx/conf.d /usr/share/nginx/html \
  && chmod 0444 /etc/nginx/conf.d/default.conf \
  && find /usr/share/nginx/html -type d -exec chmod 0555 {} + \

@@ -7,15 +7,14 @@ Gedacht für das Deployment über [Coolify](https://coolify.io).
 
 ```
 .
-├── Dockerfile          # Image auf Basis von nginx-unprivileged (läuft als UID 101)
+├── Dockerfile          # Baut mit Node (Vite), liefert dist/ mit nginx-unprivileged aus (UID 101)
 ├── docker-compose.yml  # Laufzeit-Härtung (read-only, keine Capabilities, Limits)
-├── .dockerignore       # Nur Dockerfile, nginx/ und site/ landen im Build-Kontext
+├── .dockerignore       # Nur Dockerfile, nginx/ und die Vite-Quellen landen im Build-Kontext
 ├── nginx/
 │   └── default.conf    # Server-Konfiguration: Port 8080, Security-Header, /healthz
-└── site/               # Die eigentliche Webseite (HTML, CSS, Bilder, ...)
+├── index.html, src/    # Die Landingpage (Vite + Three.js)
+└── public/             # Statische Dateien, unverändert kopiert (favicon, 404-Seite)
 ```
-
-Neue Inhalte einfach in `site/` ablegen.
 
 ## Least Privilege
 
