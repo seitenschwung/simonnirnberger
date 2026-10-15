@@ -23,11 +23,22 @@ erscheint oben rechts ein Panel. Ohne den Zusatz wird es nicht einmal geladen.
 
 - **Farben:** Papier und Tinte. Die Textfarben werden daraus berechnet.
 - **Form:** Klumpengröße, Fließtempo, Unruhe oben/unten, Drehung, Geometrie-Detail.
+- **Tinte & Strich:** handgemachter Look (ausgefranster Rand, fleckige Tinte) und
+  Zeichentrick-Zittern („boiling line“) mit einstellbaren Zeichnungen pro Sekunde.
+- **Reaktion:** Der Blob *zieht sich zum Cursor hin* oder *weicht zurück* (oder *aus*);
+  Stärke, Reichweite, Form; Klick/Tippen auf den Blob lässt ihn zucken.
 - **Zucken:** an/aus, Stärke, Abklingzeit, Pausen, Sprung, Zacken; Knopf *Jetzt zucken*.
 - **Größe & Position:** Größe und Position oben, Größe unten.
 - **Scroll:** Trägheit; *Fortschritt manuell* zeigt jeden Zustand ohne zu scrollen.
 - **Bewegung:** Pause, Tempo, Papierkorn.
-- **Augen:** sichtbar, folgen dem Cursor, Blickweite, Blinzeln; Knopf *Jetzt blinzeln*.
+- **Augen:** sichtbar, folgen dem Cursor, Blickweite, Blinzeln; *werden nervös*, je näher der
+  Blob kommt (größer, kleine Pupillen, schnelleres Blinzeln, Blicke zum Blob); *bleiben am Ende
+  übrig*, wenn alles schwarz ist; Knopf *Jetzt blinzeln*.
+- **Qualität:** automatisch (passt Auflösung, Kantenglättung und Geometrie an die Bildrate an)
+  oder fest; zeigt die aktuelle Stufe und Bilder pro Sekunde.
+
+Ohne WebGL (oder solange es lädt) zeigt die Seite einen statischen Tinten-Blob, der beim
+Scrollen trotzdem wächst.
 
 Änderungen bleiben nur in diesem Browser gespeichert. **Exportieren (JSON)** lädt sie als Datei
 herunter, **Importieren (JSON)** lädt so eine Datei wieder. **Werte kopieren** legt dasselbe JSON
