@@ -147,12 +147,12 @@ check() { # check NAME EXPECTED_STATUS URL [grep pattern]
   return 0
 }
 failed=0
-check "landing page" 200 "${APP}/" '<title>Simon Ernst Nirnberger</title>' || failed=1
+check "landing page" 200 "${APP}/" '<title>Simon Ernst Nirnberger' || failed=1
 check "health" 200 "${APP}/healthz" 'ok' || failed=1
 check "not found page" 404 "${APP}/gibt-es-nicht" || failed=1
-# The page's script and stylesheet (hashed file names, taken from the page itself).
-for asset in $(grep -o '/assets/[^"]*\.\(js\|css\)' "$WORK/landing" 2>/dev/null | sort -u); do
-  check "asset ${asset}" 200 "${APP}${asset}" || failed=1
+# The page's script and stylesheet, taken from the page itself.
+for asset in $(grep -oE '(src|href)="[^"#?:]+\.(js|css)"' "$WORK/landing" 2>/dev/null | cut -d'"' -f2 | sort -u); do
+  check "asset ${asset}" 200 "${APP}/${asset#/}" || failed=1
 done
 [ "$failed" = 0 ] || exit 1
 
