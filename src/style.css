@@ -1,0 +1,57 @@
+:root {
+  --bg: #000;
+  --name: #ece6e1;
+}
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.name {
+  position: fixed;
+  top: 50%;
+  left: 5vw;
+  z-index: 1;
+  margin: 0;
+  transform: translateY(-50%);
+  font-family: 'Nosifer', serif;
+  font-weight: 400;
+  font-size: var(--name-size, 7vw);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--name);
+  /* Kehrt sich um, sobald die Corona hinter dem Namen liegt. */
+  mix-blend-mode: difference;
+  pointer-events: none;
+  user-select: none;
+}
+
+.name span {
+  display: block;
+}
+
+main {
+  height: 400vh;
+}
+
+/* Mobil: Name lesbar halten, der Platz links ist schmaler. */
+@media (max-width: 768px) {
+  .name {
+    left: 6vw;
+    font-size: var(--name-size-mobile, 9.5vw);
+  }
+}
