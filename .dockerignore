@@ -1,4 +1,3 @@
-# Allowlist: nur was der Build braucht, landet im Build-Kontext.
 *
 !Dockerfile
 !nginx/
