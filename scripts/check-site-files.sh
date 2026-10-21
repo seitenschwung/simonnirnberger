@@ -20,5 +20,11 @@ for ref in $refs; do
     missing=1
   fi
 done
+# Each artwork's paired quote (artworks.json "fragment") must exist word for word on roman.html.
+if command -v jq >/dev/null; then
+  while IFS= read -r quote; do
+    grep -qF -- "$quote" roman.html || { echo "::error::roman.html lacks the quote paired with a work: ${quote:0:60}…"; missing=1; }
+  done < <(jq -r '.[].fragment // empty' artworks.json)
+fi
 [ "$missing" = 0 ] && echo "All $(echo "$refs" | wc -l) referenced files exist."
 exit "$missing"
