@@ -35,10 +35,11 @@ Es gibt keinen Build-Schritt: Was in `site/` liegt, wird ausgeliefert.
 - **Werke:** Die Liste `works` ganz oben in `site/app.js` steuert die Galerie. `site/artworks.json`
   enthält dieselben Daten als Export: beide synchron halten. Für den Fallback ohne JavaScript auch die
   `<noscript>`-Links in `site/index.html` anpassen.
-- **Romanauszüge („Aeternus Somnus“):** Die 14 Sätze stehen nur einmal, als `<li class="fragment" id="f-…">`
-  in `#fragments` (`site/index.html`). Ohne JavaScript sind alle sichtbar, mit JavaScript blättert
-  man durch. Das Feld `fragment` eines Werks in `artworks.json` bzw. `works` (`site/app.js`) verweist per
-  ID auf einen Satz und erscheint in der Großansicht. Nur kurze Auszüge verwenden, nie das ganze Buch,
+- **Romanauszüge („Aeternus Somnus“):** Eigene Seite `site/roman.html` mit `roman.css` und `roman.js`
+  (frei umstylbar, unabhängig von `styles.css`). Die 14 Sätze stehen dort als `<li class="fragment">`;
+  ohne JavaScript sind alle sichtbar. Das Feld `fragment` eines Werks in `artworks.json` bzw. `works`
+  (`site/app.js`) enthält denselben Satz im Wortlaut für die Großansicht; `scripts/check-site-files.sh`
+  prüft, dass er auf `roman.html` vorkommt. Nur kurze Auszüge verwenden, nie das ganze Buch,
   und das Buch selbst nicht ins Repo legen.
 - **Neues oder ersetztes Bild:** volle Auflösung nach `assets/artworks/`, Vorschau nach
   `assets/thumbs/`, jeweils als WebP. Ein ersetztes Bild bekommt einen **neuen Dateinamen**, weil

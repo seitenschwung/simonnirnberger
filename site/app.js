@@ -1,4 +1,4 @@
-const works = [{"id":13,"title":"Werk 13","type":"Malerei","category":"malerei","full":"assets/artworks/13_turquoise-red-skull.webp","thumbnail":"assets/thumbs/13_turquoise-red-skull.webp","width":1321,"height":1917,"description":"Farbintensive Malerei eines surrealen Schädels in Türkis- und Rottönen.","fragment":"welt-die-stirbt"},{"id":4,"title":"Werk 04","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/04_surreal-ink-face.webp","thumbnail":"assets/thumbs/04_surreal-ink-face.webp","width":881,"height":1381,"description":"Dichte Schwarz-Weiß-Zeichnung mit organischen, verschlungenen Gesichtsformen.","fragment":"nicht-beschreiben"},{"id":5,"title":"Werk 05","type":"Malerei","category":"malerei","full":"assets/artworks/05_red-abstract-portrait.webp","thumbnail":"assets/thumbs/05_red-abstract-portrait.webp","width":1495,"height":2030,"description":"Leuchtend rote und cremefarbene abstrakte Malerei mit organischen Konturen.","fragment":"neonriff"},{"id":8,"title":"Werk 08","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/08_stone-wall-portal.webp","thumbnail":"assets/thumbs/08_stone-wall-portal.webp","width":986,"height":1417,"description":"Schwarz-Weiß-Zeichnung eines dunklen runden Portals in einer strukturierten Steinwand.","fragment":"aegypten"},{"id":3,"title":"Werk 03","type":"Malerei","category":"malerei","full":"assets/artworks/03_green-yellow-abstract.webp","thumbnail":"assets/thumbs/03_green-yellow-abstract.webp","width":1518,"height":2030,"description":"Abstrakte grün-gelbe Malerei mit geschwungenen Formen auf dunklem Grund.","fragment":"ohne-grund"},{"id":11,"title":"Werk 11","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/11_abstract-body-ink.webp","thumbnail":"assets/thumbs/11_abstract-body-ink.webp","width":835,"height":1131,"description":"Schwarz-Weiß-Zeichnung einer organischen, menschenähnlichen Figur mit verschränkten Gliedmaßen.","fragment":"jeder-traeumt"},{"id":1,"title":"Werk 01","type":"Malerei","category":"malerei","full":"assets/artworks/01_crimson-vessel.webp","thumbnail":"assets/thumbs/01_crimson-vessel.webp","width":1040,"height":1430,"description":"Rote Malerei mit einem gefäßartigen Zentrum und organischen, muschelartigen Formen.","fragment":"sternennacht"},{"id":9,"title":"Werk 09","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/09_surreal-moon-figures.webp","thumbnail":"assets/thumbs/09_surreal-moon-figures.webp","width":1070,"height":1505,"description":"Surreale Schwarz-Weiß-Zeichnung zweier Figuren unter einem kreisförmigen Himmelskörper.","fragment":"sterne"},{"id":12,"title":"Werk 12","type":"Malerei","category":"malerei","full":"assets/artworks/12_blue-red-abstract.webp","thumbnail":"assets/thumbs/12_blue-red-abstract.webp","width":1475,"height":2015,"description":"Malerei aus ineinanderfließenden Formen in Blau, Violett und Rot.","fragment":"meeresblau"},{"id":6,"title":"Werk 06","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/06_stone-wall-creature.webp","thumbnail":"assets/thumbs/06_stone-wall-creature.webp","width":1387,"height":1064,"description":"Tintenzeichnung eines surrealen Kopfes, eingerahmt von gemusterten Steinblöcken.","fragment":"kein-prinzip"},{"id":2,"title":"Werk 02","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/02_mechanical-figure.webp","thumbnail":"assets/thumbs/02_mechanical-figure.webp","width":858,"height":1054,"description":"Schwarz-Weiß-Zeichnung einer zylindrischen, beinartigen mechanischen Figur.","fragment":"maschine"},{"id":10,"title":"Werk 10","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/10_infinite-corridor.webp","thumbnail":"assets/thumbs/10_infinite-corridor.webp","width":1012,"height":1513,"description":"Schwarz-Weiß-Zeichnung einer perspektivischen Folge von Architekturformen.","fragment":"zwischenraum"},{"id":7,"title":"Werk 07","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/07_organic-figure-ink.webp","thumbnail":"assets/thumbs/07_organic-figure-ink.webp","width":1044,"height":1422,"description":"Schwarz-Weiß-Zeichnung einer vielschichtigen organischen Figur mit spiraliger Kopfform.","fragment":"eiskristalle"}];
+const works = [{"id":13,"title":"Werk 13","type":"Malerei","category":"malerei","full":"assets/artworks/13_turquoise-red-skull.webp","thumbnail":"assets/thumbs/13_turquoise-red-skull.webp","width":1321,"height":1917,"description":"Farbintensive Malerei eines surrealen Schädels in Türkis- und Rottönen.","fragment":"Ich glaube, ich will eher Teil einer Welt sein, die sich verändert und eventuell irgendwann einmal stirbt. Nicht in einer, die schläft."},{"id":4,"title":"Werk 04","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/04_surreal-ink-face.webp","thumbnail":"assets/thumbs/04_surreal-ink-face.webp","width":881,"height":1381,"description":"Dichte Schwarz-Weiß-Zeichnung mit organischen, verschlungenen Gesichtsformen.","fragment":"Wie beschreibt man etwas, das man noch nie gesehen hat?"},{"id":5,"title":"Werk 05","type":"Malerei","category":"malerei","full":"assets/artworks/05_red-abstract-portrait.webp","thumbnail":"assets/thumbs/05_red-abstract-portrait.webp","width":1495,"height":2030,"description":"Leuchtend rote und cremefarbene abstrakte Malerei mit organischen Konturen.","fragment":"Und dann, wenn alles, wie sie sagen, mit Müll zugepumpt wird, genau dann entsteht wortwörtlich ein Lichtblick. Eine Myriade an Farben. Es ist wie ein Schrei der Natur, der sich aus dem Gestank der Städte erhebt."},{"id":8,"title":"Werk 08","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/08_stone-wall-portal.webp","thumbnail":"assets/thumbs/08_stone-wall-portal.webp","width":986,"height":1417,"description":"Schwarz-Weiß-Zeichnung eines dunklen runden Portals in einer strukturierten Steinwand.","fragment":"Es ist die Atmosphäre, das Glühen der Sonne über gelbem Sand, die Mystik vergessener Zeiten, vergessener Menschen. Einst Teil unserer Geschichte, nun selbst zu Geschichten geworden!"},{"id":3,"title":"Werk 03","type":"Malerei","category":"malerei","full":"assets/artworks/03_green-yellow-abstract.webp","thumbnail":"assets/thumbs/03_green-yellow-abstract.webp","width":1518,"height":2030,"description":"Abstrakte grün-gelbe Malerei mit geschwungenen Formen auf dunklem Grund.","fragment":"Manche Menschen brauchen nicht immer einen Grund, um Dinge zu tun."},{"id":11,"title":"Werk 11","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/11_abstract-body-ink.webp","thumbnail":"assets/thumbs/11_abstract-body-ink.webp","width":835,"height":1131,"description":"Schwarz-Weiß-Zeichnung einer organischen, menschenähnlichen Figur mit verschränkten Gliedmaßen.","fragment":"Jeder Mensch träumt – und dafür muss man nicht in einen der vielen Traumtanks verschwinden!"},{"id":1,"title":"Werk 01","type":"Malerei","category":"malerei","full":"assets/artworks/01_crimson-vessel.webp","thumbnail":"assets/thumbs/01_crimson-vessel.webp","width":1040,"height":1430,"description":"Rote Malerei mit einem gefäßartigen Zentrum und organischen, muschelartigen Formen.","fragment":"Wie das Gemälde eines längst vergessenen Künstlers erstreckte sich die Sternennacht am Himmel. Etwas, was die meisten Menschen schon lange nicht mehr zu schätzen wussten…"},{"id":9,"title":"Werk 09","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/09_surreal-moon-figures.webp","thumbnail":"assets/thumbs/09_surreal-moon-figures.webp","width":1070,"height":1505,"description":"Surreale Schwarz-Weiß-Zeichnung zweier Figuren unter einem kreisförmigen Himmelskörper.","fragment":"Ich hob meine Hand, wollte sie wie Murmeln vom Himmel holen. Leuchtende Perlen aus Licht, verankert im Kosmos, außerhalb meiner Reichweite."},{"id":12,"title":"Werk 12","type":"Malerei","category":"malerei","full":"assets/artworks/12_blue-red-abstract.webp","thumbnail":"assets/thumbs/12_blue-red-abstract.webp","width":1475,"height":2015,"description":"Malerei aus ineinanderfließenden Formen in Blau, Violett und Rot.","fragment":"Meeresblau. Das war das einzige Wort, das mir in den Sinn kam, um jene Welt zu beschreiben, in der ich mich befand."},{"id":6,"title":"Werk 06","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/06_stone-wall-creature.webp","thumbnail":"assets/thumbs/06_stone-wall-creature.webp","width":1387,"height":1064,"description":"Tintenzeichnung eines surrealen Kopfes, eingerahmt von gemusterten Steinblöcken.","fragment":"Endgültige Lösungen für existenzielle Probleme existieren nicht! Wenn es ein Naturgesetz für Philosophie und die Psyche gibt, dann ist es, dass es kein endgültiges Prinzip gibt!"},{"id":2,"title":"Werk 02","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/02_mechanical-figure.webp","thumbnail":"assets/thumbs/02_mechanical-figure.webp","width":858,"height":1054,"description":"Schwarz-Weiß-Zeichnung einer zylindrischen, beinartigen mechanischen Figur.","fragment":"Wir alle sind nur Maschinen, eine Zusammenstellung Milliarden von Komponenten, die zusammen Mensch ergeben, doch es ist alles eine Frage der Feinheit und des Details."},{"id":10,"title":"Werk 10","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/10_infinite-corridor.webp","thumbnail":"assets/thumbs/10_infinite-corridor.webp","width":1012,"height":1513,"description":"Schwarz-Weiß-Zeichnung einer perspektivischen Folge von Architekturformen.","fragment":"Alles existiere in diesem Zwischenraum, ein Zwielicht, wo alles gleichzeitig geschah…"},{"id":7,"title":"Werk 07","type":"Zeichnung","category":"zeichnung","full":"assets/artworks/07_organic-figure-ink.webp","thumbnail":"assets/thumbs/07_organic-figure-ink.webp","width":1044,"height":1422,"description":"Schwarz-Weiß-Zeichnung einer vielschichtigen organischen Figur mit spiraliger Kopfform.","fragment":"Diese zarten Eiskristalle hatten keine Wahl. Winzige Frostpünktchen auf ihrer Reise, die darin bestand, für einen kurzen Augenblick zu existieren, um dann zu vergehen."}];
 /* SIMON ERNST NIRNBERGER — Edition 04
  * Standalone vanilla JS. No frameworks, trackers, external network calls or scroll hijacking.
  * Artworks are listed in artworks.json and embedded here to support direct local preview.
@@ -63,8 +63,8 @@ async function updateMenuPreview(link){
 $$('.menu-link').forEach(link=>{
   link.addEventListener('click',()=>{
     setMenu(false,false);
-    const id=link.getAttribute('href').slice(1);
-    requestAnimationFrame(()=>document.getElementById(id)?.focus({preventScroll:true}));
+    const href=link.getAttribute('href');
+    if(href.startsWith('#'))requestAnimationFrame(()=>document.getElementById(href.slice(1))?.focus({preventScroll:true}));
   });
   link.addEventListener('pointerenter',()=>updateMenuPreview(link));
   link.addEventListener('focus',()=>updateMenuPreview(link));
@@ -169,9 +169,8 @@ function applyWork(id, direction=0, syncUrl=true){
   lightTitle.textContent=`Werk ${two(work.id)}`;
   lightType.textContent=work.type;
   $('#lightbox-description').textContent=work.description;
-  const pairedText=fragmentText(work.fragment);
-  lightFragment.hidden=!pairedText;
-  lightFragment.textContent=pairedText?`„${pairedText}“`:'';
+  lightFragment.hidden=!work.fragment;
+  lightFragment.textContent=work.fragment?`„${work.fragment}“`:'';
   lightImage.alt=work.description;
   const list=visibleWorks(), at=list.findIndex(w=>w.id===work.id);
   lightCounter.textContent=`${two(at+1)} / ${two(list.length)}`;
@@ -371,66 +370,13 @@ window.addEventListener('resize',()=>{lastHeroProgress=-1;requestMotion();},{pas
 prefersReduced.addEventListener('change',configureMotion);
 configureMotion();
 
-/* ------------------ Novel fragments ------------------
- * The passages live once, as plain HTML in #fragments (readable without JS).
- * Here they become a one-at-a-time reader; the lightbox pairs each artwork with one. */
-const fragmentList=$('#fragments');
-const fragmentItems=$$('.fragment',fragmentList);
-const fragmentControls=$('#fragments-controls'), fragmentCount=$('#fragment-count');
-let fragmentAt=0;
-function showFragment(index,animate=true){
-  fragmentAt=(index+fragmentItems.length)%fragmentItems.length;
-  fragmentItems.forEach((item,i)=>{
-    const on=i===fragmentAt;
-    item.classList.toggle('is-active',on);
-    item.inert=!on;
-    if(on && animate && motionAllowed())inkWords(item);
-  });
-  fragmentCount.textContent=`${two(fragmentAt+1)} / ${two(fragmentItems.length)}`;
-}
-// Words fade in one after another, like ink bleeding into paper.
-function inkWords(item){
-  const p=$('p',item);
-  if(!p.dataset.words){
-    p.dataset.words='1';
-    const words=p.textContent.trim().split(/\s+/);
-    p.textContent='';
-    words.forEach((word,i)=>{
-      const span=document.createElement('span');
-      span.className='word';
-      span.style.setProperty('--i',i);
-      span.textContent=word;
-      p.append(span,i<words.length-1?' ':'');
-    });
-  }
-  p.classList.remove('is-inking');
-  void p.offsetWidth;
-  p.classList.add('is-inking');
-}
-function fragmentText(id){
-  const node=id&&document.getElementById(`f-${id}`);
-  return node?node.textContent.replace(/\s+/g,' ').trim():'';
-}
-if(fragmentItems.length){
-  document.body.classList.add('js-fragments');
-  fragmentControls.hidden=false;
-  showFragment(0,false);
-  $('#fragment-prev').addEventListener('click',()=>showFragment(fragmentAt-1));
-  $('#fragment-next').addEventListener('click',()=>showFragment(fragmentAt+1));
-  $('#fragmente').addEventListener('keydown',event=>{
-    if(event.key==='ArrowLeft'){showFragment(fragmentAt-1);event.preventDefault();}
-    if(event.key==='ArrowRight'){showFragment(fragmentAt+1);event.preventDefault();}
-  });
-}
-
 /* ------------------ Wayfinding and in-view motion ------------------ */
 const chapters=[
   {id:'start',label:'Auftakt',number:'01'},
   {id:'gedanken',label:'Gedanken',number:'02'},
   {id:'werke',label:'Werke',number:'03'},
-  {id:'fragmente',label:'Roman',number:'04'},
-  {id:'ueber',label:'Zur Person',number:'05'},
-  {id:'kontakt',label:'Kontakt',number:'06'}
+  {id:'ueber',label:'Zur Person',number:'04'},
+  {id:'kontakt',label:'Kontakt',number:'05'}
 ];
 if('IntersectionObserver' in window){
   const watch=new IntersectionObserver(entries=>{
