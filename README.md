@@ -35,6 +35,9 @@ Es gibt keinen Build-Schritt: Was in `site/` liegt, wird ausgeliefert.
 - **Werke:** Die Liste `works` ganz oben in `site/app.js` steuert die Galerie. `site/artworks.json`
   enthält dieselben Daten als Export: beide synchron halten. Für den Fallback ohne JavaScript auch die
   `<noscript>`-Links in `site/index.html` anpassen.
+- **Dreamcast (`/dreamcast`):** Einstiegssequenz (Tank → Wasser → Verzerrung → Traumwelt) und Navigation über
+  schwebende „Discs“. Dateien `site/dreamcast.html|css|js`, Konzept in `docs/dreamcast-konzept.md`. Die Zitate mit
+  Seitenzahl stehen in `dreamcast.html` und werden von der Traumwelt eingeblendet.
 - **Romanauszüge („Aeternus Somnus“):** Eigene Seite `site/roman.html` mit `roman.css` und `roman.js`
   (frei umstylbar, unabhängig von `styles.css`). Die 14 Sätze stehen dort als `<li class="fragment">`;
   ohne JavaScript sind alle sichtbar. Das Feld `fragment` eines Werks in `artworks.json` bzw. `works`

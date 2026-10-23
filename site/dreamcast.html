@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eeeae2">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="Dreamcast – ein Traumtank aus dem Roman Aeternus Somnus. Steig ein und betritt die Werke von Simon Ernst Nirnberger als Dreamscape.">
+  <meta property="og:title" content="Dreamcast – Simon Ernst Nirnberger">
+  <meta property="og:description" content="Steig in den Traumtank und betritt die Werke als Dreamscape.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_AT">
+  <meta property="og:url" content="https://simonernstnirnberger.at/dreamcast">
+  <meta property="og:image" content="https://simonernstnirnberger.at/assets/social-preview.jpg">
+  <link rel="canonical" href="https://simonernstnirnberger.at/dreamcast">
+  <title>Dreamcast — Simon Ernst Nirnberger</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="dreamcast.css">
+  <script src="dreamcast.js" defer></script>
+</head>
+<body data-phase="wake">
+  <!-- Verzerrung für den Einstieg; Stärke und Frequenz setzt dreamcast.js -->
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="warp" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="warp-noise" type="fractalNoise" baseFrequency="0.004 0.012" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap id="warp-map" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <a class="skip" href="#einsteigen">Zum Inhalt</a>
+
+  <div class="wake" id="wake">
+    <header class="bar">
+      <a href="index.html" class="bar-link"><span aria-hidden="true">←</span> Simon Ernst Nirnberger</a>
+      <span class="bar-tag">Dreamcast / Eintritt</span>
+    </header>
+
+    <main id="main" class="wake-main">
+      <div class="wake-copy">
+        <p class="eyebrow">Aus dem Roman Aeternus Somnus</p>
+        <h1>Dream<wbr>cast<span class="accent">.</span></h1>
+        <p class="lede">Ein Tank, der jeden Traum zur Realität macht. Steig ein, und die Werke werden zu Räumen.</p>
+        <button type="button" class="enter" id="einsteigen" hidden>
+          <span class="enter-label">Einsteigen</span><span class="enter-ring" aria-hidden="true"></span>
+        </button>
+        <a class="enter enter-plain" id="enter-plain" href="index.html#werke"><span class="enter-label">Zu den Werken</span><span aria-hidden="true">↗</span></a>
+        <p class="small">Der Einstieg dauert wenige Sekunden. Mit <kbd>Esc</kbd> wachst du jederzeit auf.</p>
+      </div>
+
+      <figure class="tank-wrap" id="tank-wrap">
+        <svg class="tank" id="tank" viewBox="0 0 240 460" role="img" aria-label="Zeichnung eines Dreamcast: ein hoher Glaszylinder in Titan, von Schläuchen gehalten, darin ein Schlafender.">
+          <defs>
+            <clipPath id="tank-clip"><path d="M70 110a50 50 0 0 1 100 0v270a50 50 0 0 1-100 0z"/></clipPath>
+          </defs>
+          <!-- Schläuche -->
+          <path class="hose" pathLength="1" d="M120 60C120 30 120 12 120 -20"/>
+          <path class="hose" pathLength="1" d="M92 72C60 60 30 40 10 -10"/>
+          <path class="hose" pathLength="1" d="M148 72C180 60 210 40 230 -10"/>
+          <path class="hose" pathLength="1" d="M70 300C40 310 20 340 8 470"/>
+          <path class="hose" pathLength="1" d="M170 300C200 310 220 340 232 470"/>
+          <!-- Wasser (steigt beim Einstieg) -->
+          <g clip-path="url(#tank-clip)">
+            <rect class="water" x="60" y="50" width="120" height="360"/>
+            <path class="surface" d="M60 70q15-8 30 0t30 0 30 0 30 0v6H60z"/>
+          </g>
+          <!-- Schlafender -->
+          <g class="sleeper">
+            <circle cx="120" cy="190" r="15"/>
+            <path d="M120 205v95M120 222c-18 8-30 24-34 48M120 222c18 8 30 24 34 48M120 300c-8 30-10 50-12 70M120 300c8 30 10 50 12 70"/>
+          </g>
+          <!-- Glas und Titan -->
+          <path class="glass" d="M70 110a50 50 0 0 1 100 0v270a50 50 0 0 1-100 0z"/>
+          <path class="glass inner" d="M80 112a40 40 0 0 1 80 0v266a40 40 0 0 1-80 0z"/>
+          <path class="bubbles" d="M92 250v0M140 300v0M104 340v0M150 200v0"/>
+          <rect class="titan" x="52" y="86" width="136" height="12" rx="3"/>
+          <rect class="titan" x="52" y="392" width="136" height="14" rx="3"/>
+          <rect class="titan" x="38" y="410" width="164" height="22" rx="3"/>
+        </svg>
+        <figcaption class="status" id="status" aria-live="polite">Bereit.</figcaption>
+      </figure>
+    </main>
+
+    <section class="book" aria-labelledby="book-heading">
+      <h2 id="book-heading" class="eyebrow">Was der Roman über den Dreamcast sagt</h2>
+      <ul class="quotes" id="quotes">
+        <li data-whisper><blockquote><p>Es war ein Dreamcast, ein Traumtank, der langsam in eine Aufrechte Position gekurbelt wurde.</p></blockquote><cite>Seite 92</cite></li>
+        <li data-whisper><blockquote><p>Die Dreamcast’s waren so konzipiert worden, dass sie die Fantasie jedes Menschen anzapften</p></blockquote><cite>Seite 174</cite></li>
+        <li data-whisper><blockquote><p>Menschen mussten nun nichtmehr hinaus gehen, um etwas zu erleben</p></blockquote><cite>Seite 175</cite></li>
+        <li data-whisper><blockquote><p>Der Realitätsverlust und die Sucht nach seinen eigenen Fantasien, Träumen und Gelüsten</p></blockquote><cite>Seite 175</cite></li>
+        <li data-whisper><blockquote><p>um in eine Traumrealität einzusteigen</p></blockquote><cite>Seite 34</cite></li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Die Traumwelt: erst nach dem Einstieg sichtbar -->
+  <div class="dream" id="dream" aria-hidden="true" inert>
+    <canvas id="field" class="field"></canvas>
+    <div class="dream-ui">
+      <header class="dream-bar">
+        <span class="dream-tag">Dreamscape / <span id="dream-clock">00:00</span></span>
+        <button type="button" class="wake-btn" id="wake-btn">Aufwachen <span aria-hidden="true">×</span></button>
+      </header>
+      <nav class="discs" id="discs" aria-label="Dreamscape-Navigation"></nav>
+      <p class="whisper" id="whisper" aria-live="off"></p>
+      <p class="warning" id="warning" role="status" hidden>„Langer Aufenthalt in Dreamcast’s, neu oder alt, kann tatsächlich zu Amnesie führen…“ <cite>Seite 102</cite></p>
+    </div>
+  </div>
+
+  <noscript>
+    <section class="book noscript">
+      <h2 class="eyebrow">Ohne JavaScript</h2>
+      <p>Der Einstieg braucht JavaScript. Die Werke findest du hier: <a href="index.html#werke">Werke</a> · <a href="roman.html">Roman</a> · <a href="index.html#ueber">Über mich</a>.</p>
+    </section>
+  </noscript>
+</body>
+</html>
