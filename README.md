@@ -38,6 +38,9 @@ Es gibt keinen Build-Schritt: Was in `site/` liegt, wird ausgeliefert.
 - **Dreamcast (`/dreamcast`):** Einstiegssequenz (Tank → Wasser → Verzerrung → Traumwelt) und Navigation über
   schwebende „Discs“. Dateien `site/dreamcast.html|css|js`, Konzept in `docs/dreamcast-konzept.md`. Die Zitate mit
   Seitenzahl stehen in `dreamcast.html` und werden von der Traumwelt eingeblendet.
+- **Glasbaum (`glasbaum.html`):** drehbarer Kristallbaum (Canvas-2D-Projektion, keine Bibliotheken). Scrollen/Ziehen dreht,
+  der Zeiger lenkt das Licht, die hellen Blätter öffnen Fragmente aus Aeternus Somnus S. 77–79. Die Zitate stehen
+  als Liste in `glasbaum.html` (auch ohne JavaScript lesbar) und werden von `glasbaum.js` gelesen.
 - **Romanauszüge („Aeternus Somnus“):** Eigene Seite `site/roman.html` mit `roman.css` und `roman.js`
   (frei umstylbar, unabhängig von `styles.css`). Die 14 Sätze stehen dort als `<li class="fragment">`;
   ohne JavaScript sind alle sichtbar. Das Feld `fragment` eines Werks in `artworks.json` bzw. `works`

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eeeae2">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="Der Glasbaum – ein drehbarer Kristallbaum aus dem Roman Aeternus Somnus von Simon Ernst Nirnberger. Die Blätter tragen Fragmente aus dem Buch.">
+  <meta property="og:title" content="Der Glasbaum – Simon Ernst Nirnberger">
+  <meta property="og:description" content="Ein drehbarer Kristallbaum. Die hellen Blätter tragen Fragmente aus dem Roman.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_AT">
+  <meta property="og:url" content="https://simonernstnirnberger.at/glasbaum.html">
+  <meta property="og:image" content="https://simonernstnirnberger.at/assets/social-preview.jpg">
+  <link rel="canonical" href="https://simonernstnirnberger.at/glasbaum.html">
+  <title>Der Glasbaum — Simon Ernst Nirnberger</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="glasbaum.css">
+  <script src="glasbaum.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#fragmente">Zu den Fragmenten</a>
+
+  <header class="bar">
+    <a href="index.html" class="bar-link"><span aria-hidden="true">←</span> Simon Ernst Nirnberger</a>
+    <span class="bar-tag">Aeternus Somnus / S. 77–79</span>
+  </header>
+
+  <main id="main">
+    <section class="stage" id="stage" aria-labelledby="titel">
+      <div class="stage-pin">
+        <canvas id="tree" class="tree" aria-label="Drehbarer Kristallbaum. Die Fragmente stehen als Liste unter dem Bild." role="img"></canvas>
+
+        <div class="stage-copy">
+          <span class="eyebrow">Interaktiv</span>
+          <h1 id="titel">Der Glasbaum</h1>
+          <p class="hint">Scrollen oder Ziehen dreht den Baum, die Maus lenkt das Licht. Die hellen Blätter tragen Fragmente.</p>
+        </div>
+
+        <figure class="card" id="card" aria-live="polite" hidden>
+          <span class="card-kind" id="card-kind"></span>
+          <blockquote class="card-quote" id="card-quote"></blockquote>
+          <figcaption class="card-meta"><span id="card-page"></span></figcaption>
+          <button type="button" class="card-close" id="card-close" aria-label="Fragment schließen">×</button>
+        </figure>
+
+        <button type="button" class="next" id="next">Nächstes Fragment <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="book" id="fragmente" aria-labelledby="alle">
+      <span class="eyebrow">Aeternus Somnus</span>
+      <h2 id="alle">Alle Fragmente</h2>
+      <ol class="frags" id="frags">
+        <li data-kind="Ort"><blockquote>Ein Plätzchen Mystik in einer sonst so mechanischen und verseuchten Welt.</blockquote><cite>Seite 77</cite></li>
+        <li data-kind="Licht"><blockquote>Die transparenten Kristallblätter reflektierten das Licht in tausende Farben und ließen die Umgebung in eine Myriade von Kolorierungen schwimmen.</blockquote><cite>Seite 77</cite></li>
+        <li data-kind="Äste"><blockquote>Die wie aus blauem Stahl gehauenen Äste sahen aus, als würden sie wie Blitze in den Himmel reichen.</blockquote><cite>Seite 78</cite></li>
+        <li data-kind="Wurzeln"><blockquote>Wurzeln aus Titanium, die das Blau des Himmels dominieren wollen.</blockquote><cite>Seite 78</cite></li>
+        <li data-kind="Blätter"><blockquote>Die spitzen Blätter, Eisskulpturen mit unentbehrlichen Erfahrungen aus längst vergessender Zeit.</blockquote><cite>Seite 78</cite></li>
+        <li data-kind="Herkunft"><blockquote>Intelligentes Leben, als Form von Kristallit, das würde alles in den Schatten stellen, was man von Leben zu wissen dachte.</blockquote><cite>Seite 78</cite></li>
+        <li data-kind="Gerücht"><blockquote>Sie sind das Los der Menschen, die nichts außer einer guten Geschichte haben, und mehr ist da wahrscheinlich auch nicht dran.</blockquote><cite>Seite 78</cite></li>
+        <li data-kind="Wind"><blockquote>Die Blätter wogen im Wind, der sich durch die Strömungen der Strukturen über ihnen ergaben.</blockquote><cite>Seite 78</cite></li>
+        <li data-kind="Spiegel"><blockquote>Scherben von Reflektionen schnell vergangener Bilder tanzten in dem Baum umher.</blockquote><cite>Seite 79</cite></li>
+      </ol>
+      <p class="more"><a href="roman.html">Weitere Fragmente aus dem Roman <span aria-hidden="true">→</span></a></p>
+    </section>
+  </main>
+
+  <noscript>
+    <p class="noscript">Der drehbare Baum braucht JavaScript. Die Fragmente stehen oben in der Liste.</p>
+  </noscript>
+</body>
+</html>
