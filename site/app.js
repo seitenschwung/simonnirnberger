@@ -373,10 +373,12 @@ configureMotion();
 /* ------------------ Wayfinding and in-view motion ------------------ */
 const chapters=[
   {id:'start',label:'Auftakt',number:'01'},
-  {id:'gedanken',label:'Gedanken',number:'02'},
-  {id:'werke',label:'Werke',number:'03'},
-  {id:'ueber',label:'Zur Person',number:'04'},
-  {id:'kontakt',label:'Kontakt',number:'05'}
+  {id:'uebersicht',label:'Übersicht',number:'02'},
+  {id:'gedanken',label:'Gedanken',number:'03'},
+  {id:'werke',label:'Werke',number:'04'},
+  {id:'roman',label:'Roman',number:'05'},
+  {id:'ueber',label:'Zur Person',number:'06'},
+  {id:'kontakt',label:'Kontakt',number:'07'}
 ];
 if('IntersectionObserver' in window){
   const watch=new IntersectionObserver(entries=>{

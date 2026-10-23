@@ -116,3 +116,40 @@ body.locked{overflow:hidden}body,button{font-family:Arial,Helvetica,sans-serif}b
 .lightbox-fragment{margin:14px 0 0;max-width:620px;font-family:Georgia,serif;font-style:italic;font-size:15px;line-height:1.45;color:#d8d0c6}
 .lightbox-fragment[hidden]{display:none}
 @media(max-width:860px){.lightbox-fragment{font-size:13px;max-width:65vw}}
+
+/* ======================= EDITION 05: ÜBERSICHT & ROMAN ======================= */
+.header-roman{margin-left:clamp(14px,2vw,28px)}
+.hero-copy .hero-link-book{margin-left:clamp(18px,2vw,32px)}
+.hero-description em{font-family:Georgia,serif}
+.overview{padding-block:clamp(90px,10vw,170px)}
+.overview-head{margin-bottom:clamp(40px,5vw,80px)}
+.overview-head h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(44px,6vw,104px);line-height:.92;letter-spacing:-.06em;margin:20px 0 0}
+.overview-head h2 em{font-style:italic}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,28px)}
+.door{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);min-height:clamp(260px,26vw,400px);border:1px solid var(--line);background:var(--white);transition:border-color .4s,background .4s}
+.door:hover,.door:focus-visible{border-color:var(--ink)}
+.door-media{display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--paper-2)}
+.door-media img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.door:hover .door-media img{transform:scale(1.04)}
+.door-media-text{background:var(--night);color:var(--white)}
+.door-mark{font-family:Georgia,serif;font-style:italic;font-size:clamp(70px,9vw,150px);line-height:1;letter-spacing:-.13em}
+.door-mark span{color:var(--wine-light)}
+.door-body{display:flex;flex-direction:column;padding:clamp(20px,2.4vw,40px)}
+.door-kind{font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.24em;color:var(--wine)}
+.door-title{margin-top:14px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(26px,2.9vw,46px);line-height:1;letter-spacing:-.04em}
+.door-text{margin-top:14px;max-width:24em;line-height:1.6;color:var(--muted)}
+.door-go{margin-top:auto;padding-top:24px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.door:hover .door-go{color:var(--wine)}
+.overview-links{display:flex;flex-wrap:wrap;gap:12px clamp(20px,3vw,48px);margin:clamp(28px,3vw,44px) 0 0;padding:0;list-style:none}
+.overview-links a{display:inline-flex;gap:12px;padding-bottom:6px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.14em;text-transform:uppercase;transition:color .3s,border-color .3s}
+.overview-links a:hover{color:var(--wine);border-color:var(--wine)}
+.book-band{background:#261e21;color:#f2ede4}
+.book-band-inner{padding-block:clamp(90px,10vw,170px)}
+.book-band h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(56px,8vw,140px);line-height:.9;letter-spacing:-.07em;margin:22px 0 18px}
+.book-band h2 em{font-style:italic}
+.book-band-sub{margin:0 0 clamp(28px,4vw,56px);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#a89f93}
+.book-band-quote{margin:0 0 clamp(30px,4vw,56px);max-width:24em;font-family:Georgia,serif;font-style:italic;font-size:clamp(20px,2.2vw,34px);line-height:1.3;color:#d8d0c6}
+.footer-links{display:flex;flex-wrap:wrap;gap:8px 22px}
+.footer-links a:hover{color:var(--wine)}
+@media(max-width:860px){.doors{grid-template-columns:1fr}.door{min-height:0}.door-media{min-height:200px}}
+@media(max-width:460px){.door{grid-template-columns:1fr}.door-media{height:180px}.hero-copy .hero-link-book{margin-left:0;margin-top:14px}}
