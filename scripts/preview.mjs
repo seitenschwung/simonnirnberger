@@ -39,7 +39,8 @@ createServer(async (req, res) => {
   const path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (path === '/healthz') return res.writeHead(200, { ...headers, 'Content-Type': 'text/plain' }).end('ok\n');
   if (path === '/version.txt') return res.writeHead(200, { ...headers, 'Content-Type': 'text/plain' }).end('preview\n');
-  const found = await file(path);
+  if (path === '/dreamcast/') return res.writeHead(301, { ...headers, Location: '/dreamcast' }).end();
+  const found = await file(path === '/dreamcast' ? '/dreamcast.html' : path);
   if (found) return res.writeHead(200, { ...headers, 'Content-Type': found.type || 'application/octet-stream' }).end(found.body);
   const notFound = await file('/404.html');
   res.writeHead(404, { ...headers, 'Content-Type': types['.html'] }).end(notFound?.body ?? 'Not found');

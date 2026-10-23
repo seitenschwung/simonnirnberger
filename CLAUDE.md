@@ -6,8 +6,9 @@ Served by nginx-unprivileged in Docker, deployed via GitHub Actions → Coolify.
 
 ## Layout
 - `site/` is shipped as is: `index.html`+`styles.css`+`app.js` (portfolio, gallery, viewer, scroll hero),
-  `roman.html|css|js` (novel page, independent styling), `404.html|css`, `artworks.json`, `assets/`
-- `nginx/default.conf` port 8080, CSP (`'self'` only), caching, `/healthz`
+  `roman.html|css|js` (novel page, independent styling), `dreamcast.html|css|js` (entry sequence + dreamscape nav at `/dreamcast`), `404.html|css`, `artworks.json`, `assets/`
+- `nginx/default.conf` port 8080, CSP (`'self'` only), caching, `/healthz`, `/dreamcast` route
+- `docs/dreamcast-konzept.md` design concept for the Dreamcast page (book refs pp. 34, 92, 174–175)
 - `Dockerfile`, `docker-compose.yml` hardened runtime (read-only, cap_drop ALL, limits)
 - `scripts/` `preview.mjs`, `check-site-files.sh`, `coolify-deploy.sh`
 - `.github/workflows/ci.yml` checks, image build + browser tests; on `main` publish + deploy
@@ -31,6 +32,7 @@ Served by nginx-unprivileged in Docker, deployed via GitHub Actions → Coolify.
 ## Pitfalls
 - Mobile hero: the media query in `styles.css` must not set `.hero-art` width/height; it overrides
   `--art-width/--art-height` and breaks the zoom on scroll.
+- Dreamcast page: no inline styles (CSP); set styles from JS via CSSOM only. Needs `/dreamcast` in nginx + `scripts/preview.mjs`.
 - `/roman` without `.html` needs `try_files $uri $uri.html` in nginx (not done; links use `roman.html`).
 - `pkill -f "<pattern>"` in the Bash tool kills its own shell if the pattern appears in the command.
 

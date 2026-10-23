@@ -15,6 +15,7 @@ refs=$(
 missing=0
 for ref in $refs; do
   [ -z "${ref#/}" ] && continue # "/" is the start page
+  [ "${ref#/}" = dreamcast ] && continue # clean URL, nginx serves dreamcast.html
   if [ ! -e "${ref#/}" ]; then
     echo "::error::site/ references a missing file: ${ref}"
     missing=1
