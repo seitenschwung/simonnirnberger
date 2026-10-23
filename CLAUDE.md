@@ -6,7 +6,7 @@ Served by nginx-unprivileged in Docker, deployed via GitHub Actions → Coolify.
 
 ## Layout
 - `site/` is shipped as is: `index.html`+`styles.css`+`app.js` (portfolio, gallery, viewer, scroll hero),
-  `roman.html|css|js` (novel page, independent styling), `dreamcast.html|css|js` (entry sequence + dreamscape nav at `/dreamcast`), `404.html|css`, `artworks.json`, `assets/`
+  `roman.html|css|js` (novel page, independent styling), `dreamcast.html|css|js` (entry sequence + dreamscape nav at `/dreamcast`), `glasbaum.html|css|js` (crystal tree, canvas 2D; quotes pp. 77–79 are the HTML list), `404.html|css`, `artworks.json`, `assets/`
 - `nginx/default.conf` port 8080, CSP (`'self'` only), caching, `/healthz`, `/dreamcast` route
 - `docs/dreamcast-konzept.md` design concept for the Dreamcast page (book refs pp. 34, 92, 174–175)
 - `Dockerfile`, `docker-compose.yml` hardened runtime (read-only, cap_drop ALL, limits)
